@@ -58,7 +58,7 @@ function Messages() {
           <p className="messages-chat-chat-message">с тюленями</p>
           <p className="messages-chat-chat-message">ты говорил будут тюлени</p>
           <p className="messages-chat-chat-message">АЛО</p>
-          <p className="messages-chat-chat-message">ну понятно</p>
+          <p className="messages-chat-chat-message">ну понятно...</p>
         </div>
 
         <div className="chat-input-container">
