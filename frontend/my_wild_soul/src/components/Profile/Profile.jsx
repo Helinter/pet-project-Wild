@@ -2,7 +2,6 @@ import AddButton from '../../images/add-square-02.svg';
 import Photo from '../../images/icons/photo_2024-01-06_15-31-50.jpg';
 import Tulen from '../../images/1655674618_42-kartinkin-net-p-kartinki-tyulenei-45.jpg';
 import React, { useState, useEffect } from 'react';
-import ImagePopup from '../Popups/ImagePopup';
 
 function Profile() {
 
@@ -60,7 +59,6 @@ function Profile() {
           <img src={Tulen} alt="" />
         </div>
 
-        <ImagePopup />
     </section>
 
   );
