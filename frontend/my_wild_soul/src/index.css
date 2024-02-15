@@ -1,0 +1,9 @@
+@import url(./vendor/normalize.css);
+@import url(./components/App/App.css);
+@import url(./components/Main/Main.css);
+@import url(./components/Bar/Bar.css);
+@import url(./components/Home/Home.css);
+@import url(./components/Search/Search.css);
+@import url(./components/Friends/Friends.css);
+@import url(./components/Messages/Messages.css);
+@import url(./components/Profile/Profile.css);
