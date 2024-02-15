@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/static/css/main.d312655f.css",
+    "main.js": "/static/js/main.967b49ea.js",
+    "static/js/592.5a66de1e.chunk.js": "/static/js/592.5a66de1e.chunk.js",
+    "static/media/1655674618_42-kartinkin-net-p-kartinki-tyulenei-45.jpg": "/static/media/1655674618_42-kartinkin-net-p-kartinki-tyulenei-45.722fcff2ff05c2d5d328.jpg",
+    "static/media/photo_2024-01-06_15-31-50.jpg": "/static/media/photo_2024-01-06_15-31-50.14f6948c605d4f69d51c.jpg",
+    "static/media/1304332220_0_3b4cb_95648a16_orig.png": "/static/media/1304332220_0_3b4cb_95648a16_orig.d4eddbe2cf087f83aa37.png",
+    "static/media/Vector3Home.svg": "/static/media/Vector3Home.471baf78de00d3620e304a40b3b84826.svg",
+    "static/media/micro.svg": "/static/media/micro.933c6cd3b1ee8fff55d687b1c6da833b.svg",
+    "static/media/Message_Notification.svg": "/static/media/Message_Notification.2441cb90374e4e52e92aa294cf62f783.svg",
+    "index.html": "/index.html",
+    "static/media/user-profile-circle.svg": "/static/media/user-profile-circle.55cb5df4ba38a1b718ed61065dd66b22.svg",
+    "static/media/addMedia.svg": "/static/media/addMedia.0325782a42c777539fb4ea61c08801c4.svg",
+    "static/media/add-square-02.svg": "/static/media/add-square-02.9cc7123df63324006fb054ef8dfad624.svg",
+    "static/media/Search.svg": "/static/media/Search.f83422491865780946866da4268c280d.svg",
+    "main.d312655f.css.map": "/static/css/main.d312655f.css.map",
+    "main.967b49ea.js.map": "/static/js/main.967b49ea.js.map",
+    "592.5a66de1e.chunk.js.map": "/static/js/592.5a66de1e.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d312655f.css",
+    "static/js/main.967b49ea.js"
+  ]
+}
