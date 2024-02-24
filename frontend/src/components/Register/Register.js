@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../Header/Header';
 import { Link } from 'react-router-dom';
 import { api } from '../../utils/MainApi';
 import { useFormWithValidation } from '../FormValidator/FormValidator';
@@ -74,7 +73,6 @@ function Register({ setIsRegistered, setImageSrc, setError, setIsLogedin }) {
 
   return (
     <>
-      <Header />
       <section className="register">
         <h1 className="register__title">Добро пожаловать!</h1>
         <form onSubmit={handleRegister} noValidate>

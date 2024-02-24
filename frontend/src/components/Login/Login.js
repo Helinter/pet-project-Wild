@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../Header/Header';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../../utils/MainApi';
 import { setToken } from '../TokenHelper/TokenHelper';
@@ -44,7 +43,7 @@ function Login({ setIsLogedin }) {
               localStorage.setItem('currentUser', JSON.stringify(userData));
             }
           }
-          navigate('/movies');
+          navigate('/');
         }
       } catch (error) {
         console.error('Ошибка авторизации:', error);
@@ -54,7 +53,6 @@ function Login({ setIsLogedin }) {
 
   return (
     <>
-      <Header />
       <section className="register">
         <h1 className="register__title">Рады видеть!</h1>
         <form onSubmit={handleLogin}>
