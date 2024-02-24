@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PopupWithForm from './PopupWithForm';
 import { useCurrentUser } from '../../context/CurrentUserContext';
 
-export default function EditProfilePopup({ isOpen, handleUpdateUser }) {
+export default function EditProfilePopup({ closeAllPopups, isOpen, handleUpdateUser }) {
 
 
   const [name, setName] = useState('');
@@ -40,11 +40,12 @@ export default function EditProfilePopup({ isOpen, handleUpdateUser }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await handleUpdateUser(name, email, bio, age)
+    handleUpdateUser(name, email, bio, age)
   }
 
   return (
     <PopupWithForm
+    onClose={closeAllPopups}
       title="Редактировать профиль"
       name="profileForm"
       isOpen={isOpen}

@@ -86,7 +86,7 @@ function App() {
           <Route path="/profile" element={<Profile updateCurrentUser={updateCurrentUser} currentUser={currentUser} handleLogout={handleLogout} handleEditProfileClick={handleEditProfileClick} />} />
         </Route>
       </Routes>
-      <EditProfilePopup isOpen={isEditProfilePopupOpen} handleUpdateUser={handleUpdateUser} />
+      <EditProfilePopup closeAllPopups={closeAllPopups} isOpen={isEditProfilePopupOpen} handleUpdateUser={handleUpdateUser} />
     </section>
   );
 }
