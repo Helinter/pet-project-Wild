@@ -11,6 +11,7 @@ export class Api {
   _checkResponse(res) {
     if (res.ok) {
       return res.json();
+      
     }
     return Promise.reject(`Ошибка: ${res.status}`);
   }
@@ -41,7 +42,6 @@ export class Api {
 
       return this._checkResponse(res);
     } catch (error) {
-      // При ошибке или невалидном токене вызывайте "логаут"
       this.logoutUser();
       return Promise.reject(error.message);
     }
@@ -54,12 +54,7 @@ export class Api {
   }
 
   async getUserInfo() {
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      return Promise.reject('Токен отсутствует');
-    }
-
+   
     const res = await fetch(`${this.url}/users/me`, {
       headers: this._updateHeaders(),
     });
@@ -74,7 +69,7 @@ export class Api {
   }
 
   // Метод для обновления информации о пользователе на сервере
-  async updateUserInfo(name, email) {
+  async updateUserInfo(name, email, bio, age) {
 
     const res = await fetch(`${this.url}/users/me`, {
       method: 'PATCH',
@@ -82,12 +77,16 @@ export class Api {
       body: JSON.stringify({
         name: name,
         email: email,
+        bio: bio,
+        age: age,
+
       })
     });
 
     const data = await this._checkResponse(res);
     return data;
   }
+  
 
   // Метод для регистрации пользователя
   async createUser(name, email, password) {
@@ -110,7 +109,7 @@ export class Api {
     if (res.ok) {
       const data = await res.json();
       setToken(data.token);
-      return data; // Возвращаем токен из успешного ответа сервера
+      return data;
     }
 
     return Promise.reject(`Ошибка: ${res.status}`);

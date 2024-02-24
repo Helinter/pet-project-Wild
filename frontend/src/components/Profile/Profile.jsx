@@ -20,7 +20,6 @@ function Profile({handleLogout}) {
     setImagePopupOpen(false);
   };
 
-  
 
   return (
 
@@ -38,7 +37,7 @@ function Profile({handleLogout}) {
             <p className="profile__container-subs-box-item">99 подписчиков</p>
             <p className="profile__container-subs-box-item">12 подписок</p>
           </div>
-          <p className='profile__container-text'>Разработчик и любитель тюленей</p>
+          <p className='profile__container-text'>{currentUser?.bio || 'Информация'}</p>
         </div>
       </div>
       <div className="momentous">

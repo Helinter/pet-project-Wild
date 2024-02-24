@@ -22,6 +22,17 @@ const userSchema = new mongoose.Schema({
     required: true,
     select: false,
   },
+  bio: {
+    type: String,
+    minlength: 5,
+    maxlength: 150,
+    default: 'описание',
+  },
+  age: {
+    type: Number,
+    maxlength: 2,
+    default: 18,
+  },
 });
 
 const User = mongoose.model('User', userSchema);

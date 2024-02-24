@@ -10,20 +10,25 @@ const saltRounds = 10;
 // Получение информации о пользователе
 exports.getUserInfo = (req, res) => {
   const {
-    _id, name, email,
+    _id, name, email, bio, age
   } = req.user;
+
+  // Выводим в консоль данные перед отправкой ответа клиенту
+  console.log('Данные пользователя:', { _id, name, email, bio, age });
+
   res.status(200).json({
-    _id, name, email,
+    _id, name, email, bio, age
   });
 };
 
+
 // Обновление информации о пользователе
 exports.updateUserInfo = async (req, res, next) => {
-  const { name, email } = req.body;
+  const { name, email, age, bio } = req.body;
 
   try {
     // Валидация данных перед обновлением пользователя
-    const validatedData = await userValidationSchema.validateAsync({ name, email });
+    const validatedData = await userValidationSchema.validateAsync({ name, email, age, bio });
 
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
@@ -37,8 +42,10 @@ exports.updateUserInfo = async (req, res, next) => {
           _id: updatedUser._id,
           name: updatedUser.name,
           email: updatedUser.email,
+          bio: updatedUser.bio,
+          age: updatedUser.age,
         },
-        NODE_ENV === 'production' ? JWT_SECRET : '7e48151e23b2943091c18f0e3e6e0c6c625f514b47d726c773a39df19eac1e0e',
+        NODE_ENV === 'production' ? JWT_SECRET : 'your-dev-secret',
         { expiresIn: '1w' },
       );
 
@@ -66,6 +73,8 @@ exports.login = async (req, res, next) => {
           _id: user._id,
           name: user.name,
           email: user.email,
+          bio: user.bio,
+          age: user.age,
         },
         NODE_ENV === 'production' ? JWT_SECRET : '7e48151e23b2943091c18f0e3e6e0c6c625f514b47d726c773a39df19eac1e0e',
         { expiresIn: '1w' },
