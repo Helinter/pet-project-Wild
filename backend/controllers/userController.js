@@ -36,24 +36,8 @@ exports.updateUserInfo = async (req, res, next) => {
       { new: true, runValidators: true },
     );
     if (updatedUser) {
-      // После успешного обновления данных пользователя повторно аутентифицируйте его
-      const token = jwt.sign(
-        {
-          _id: updatedUser._id,
-          name: updatedUser.name,
-          email: updatedUser.email,
-          bio: updatedUser.bio,
-          age: updatedUser.age,
-        },
-        NODE_ENV === 'production' ? JWT_SECRET : 'your-dev-secret',
-        { expiresIn: '1w' },
-      );
-
-      // Обновление токена в куки
-      res.cookie('token', token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
-
-      // Отправляем обновленные данные пользователя
-      res.status(200).json({ success: true, user: updatedUser, token });
+      // Обновление данных пользователя успешно выполнено
+      res.status(200).json({ success: true, user: updatedUser });
     } else {
       throw new NotFoundError('User not found');
     }
@@ -61,6 +45,7 @@ exports.updateUserInfo = async (req, res, next) => {
     next(error);
   }
 };
+
 
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
