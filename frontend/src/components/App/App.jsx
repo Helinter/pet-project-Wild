@@ -23,6 +23,14 @@ function App() {
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = useState(false);
 
   useEffect(() => {
+    api.checkToken()
+      .catch(error => {
+        console.error('Ошибка проверки токена:', error);
+        handleLogout();
+      });
+  }, []);
+
+  useEffect(() => {
     const storedUser = localStorage.getItem('currentUser');
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
