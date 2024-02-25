@@ -168,7 +168,7 @@ const handleCardClick = (card) => {
       <EditProfilePopup closeAllPopups={closeAllPopups} isOpen={isEditProfilePopupOpen} handleUpdateUser={handleUpdateUser} />
       <EditAvatarPopup closeAllPopups={closeAllPopups} isOpen={isEditAvatarPopupOpen} handleUpdateAvatar={handleUpdateAvatar} />
       <AddCardPopup closeAllPopups={closeAllPopups} isOpen={isAddCardPopupOpen} handleAddCard={handleAddCard} />
-      <ImagePopup link={selectedCard?.link} name={selectedCard?.name} isOpen={isImagePopupOpen} onClose={closeAllPopups} />
+      <ImagePopup link={selectedCard?.link} name={selectedCard?.name} isOpen={isImagePopupOpen} onClose={closeAllPopups} cards={cards} setSelectedCard={setSelectedCard}/>
     </section>
   );
 }

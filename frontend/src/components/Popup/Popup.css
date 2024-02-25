@@ -203,3 +203,29 @@ color: #FFFFFF;
   width: auto;
 }
 
+.popup__container-selector-button{
+  position: fixed;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  outline: inherit;
+  width: 300px;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  top: 0;
+}
+
+.popup__container-selector-button-left{
+left: 16px;
+background-image: url(../../images/Arrow_Left.svg);
+}
+
+.popup__container-selector-button-right{
+  right: 16px;
+  background-image: url(../../images/Vector.svg);
+}
