@@ -33,6 +33,17 @@ const userSchema = new mongoose.Schema({
     maxlength: 2,
     default: 18,
   },
+  avatar: {
+    type: String,
+    default: 'http://static.tildacdn.com/tild3364-3662-4439-a262-313239363932/DSC_2841.jpg',
+    validate: {
+      validator: (value) => {
+        const urlRegex = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]+#?$/;
+        return urlRegex.test(value);
+      },
+      message: 'Invalid avatar URL',
+    },
+  },
 });
 
 const User = mongoose.model('User', userSchema);

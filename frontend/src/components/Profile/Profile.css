@@ -1,42 +1,42 @@
-.profile{
-display: flex;
-flex-direction: column;
-justify-content: center;
-height: 100%;
-max-width: 670px;
+.profile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  max-width: 670px;
 }
 
-.profile__container{
-display: flex;
-flex-direction: row;
-margin-bottom: 30px;
+.profile__container {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 30px;
 }
 
-.profile__container-photo{
-width: 145px;
-height: 145px;
-border-radius: 100px;
-object-fit: cover;
+.profile__container-photo {
+  width: 145px;
+  height: 145px;
+  border-radius: 100px;
+  object-fit: cover;
 }
 
-.profile__container-info{
-display: flex;
-flex-direction: column;
-margin-left: 30px;
+.profile__container-info {
+  display: flex;
+  flex-direction: column;
+  margin-left: 30px;
 }
 
-.profile__container-name-box{
+.profile__container-name-box {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
-.profile__container-info-name{
-margin: 0;
-padding: 0;
+.profile__container-info-name {
+  margin: 0;
+  padding: 0;
 }
 
-.profile__container-info-button{
+.profile__container-info-button {
   padding: 0;
   margin: 0;
   border: none;
@@ -52,7 +52,7 @@ padding: 0;
   margin-left: 43px;
 }
 
-.add-button{
+.add-button {
   padding: 0;
   margin: 0;
   border: none;
@@ -62,37 +62,34 @@ padding: 0;
   outline: none;
 }
 
-.profile__container-subs-box{
+.profile__container-subs-box {
   display: flex;
   flex-direction: row;
   gap: 23px;
   margin-top: 30px;
 }
 
-.profile__container-subs-box-item{
+.profile__container-subs-box-item {
   margin: 0;
   padding: 0;
 }
 
-.profile__container-text{
+.profile__container-text {
   margin: 0;
   padding: 0;
   margin-top: 25px;
 }
 
-.momentous{
+.momentous {
   width: 100%;
-border-bottom: 1px solid #434343;
+  border-bottom: 1px solid #434343;
 }
 
-.momentous__item{
-padding-bottom: 30px;
+.momentous__item {
+  padding-bottom: 30px;
 }
 
-.momentous__item-icon{
-
-
-}
+.momentous__item-icon {}
 
 .profile__photos {
   display: grid;
@@ -108,4 +105,17 @@ padding-bottom: 30px;
   height: 120px;
   object-fit: cover;
   border-radius: 30px;
+}
+
+.profile__container-avatar-button {
+  background: none;
+  outline: none;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+border-radius: 50%;
 }

@@ -12,6 +12,7 @@ import Friends from '../Friends/Friends';
 import Messages from '../Messages/Messages';
 import Profile from '../Profile/Profile';
 import EditProfilePopup from '../Popup/EditProfilePopup';
+import EditAvatarPopup from '../Popup/EditAvatarPopup'
 
 function App() {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ function App() {
   });
   const { currentUser, updateCurrentUser } = useCurrentUser();
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = useState(false);
+  const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = useState(false);
 
   useEffect(() => {
     api.checkToken()
@@ -44,11 +46,15 @@ function App() {
 
   const handleEditProfileClick = () => {
     setEditProfilePopupOpen(true);
+  };
 
+  const handleEditAvatarClick = () => {
+    setEditAvatarPopupOpen(true);
   };
 
   const closeAllPopups = () => {
     setEditProfilePopupOpen(false);
+    setEditAvatarPopupOpen(false);
   };
 
   const handleLogout = () => {
@@ -69,6 +75,27 @@ function App() {
   };
   
 
+  const handleUpdateAvatar = async (avatarLink) => {
+    try {
+        const res = await api.updateAvatar(avatarLink);
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || {}; // Инициализируем как пустой объект, если отсутствует
+
+        // Обновляем или создаем поле аватара
+        currentUser = {
+            ...currentUser,
+            avatar: res.user?.avatar || avatarLink // Используем аватар из ответа сервера, если он есть, в противном случае используем переданный avatarLink
+        };
+
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        updateCurrentUser(currentUser);
+        closeAllPopups();
+    } catch (error) {
+        console.error('Ошибка при обновлении аватара:', error);
+    }
+};
+
+
+
 
 
 
@@ -83,10 +110,11 @@ function App() {
           <Route path="/search" element={<Search />} />
           <Route path="/friends" element={<Friends />} />
           <Route path="/messages" element={<Messages />} />
-          <Route path="/profile" element={<Profile updateCurrentUser={updateCurrentUser} currentUser={currentUser} handleLogout={handleLogout} handleEditProfileClick={handleEditProfileClick} />} />
+          <Route path="/profile" element={<Profile updateCurrentUser={updateCurrentUser} currentUser={currentUser} handleLogout={handleLogout} handleEditAvatarClick={handleEditAvatarClick} handleEditProfileClick={handleEditProfileClick} />} />
         </Route>
       </Routes>
       <EditProfilePopup closeAllPopups={closeAllPopups} isOpen={isEditProfilePopupOpen} handleUpdateUser={handleUpdateUser} />
+      <EditAvatarPopup closeAllPopups={closeAllPopups} isOpen={isEditAvatarPopupOpen} handleUpdateAvatar={handleUpdateAvatar} />
     </section>
   );
 }

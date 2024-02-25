@@ -3,14 +3,14 @@ import Photo from '../../images/icons/photo_2024-01-06_15-31-50.jpg';
 import Tulen from '../../images/1655674618_42-kartinkin-net-p-kartinki-tyulenei-45.jpg';
 import React from 'react';
 
-function Profile({ currentUser, handleLogout, handleEditProfileClick}) {
+function Profile({ currentUser, handleLogout, handleEditAvatarClick, handleEditProfileClick}) {
 
 
   return (
 
     <section className="profile">
       <div className="profile__container">
-        <img src={Photo} alt="" className="profile__container-photo" />
+        <button className="profile__container-avatar-button" onClick={handleEditAvatarClick} ><img src={currentUser.avatar} alt="" className="profile__container-photo" /></button>
         <div className="profile__container-info">
           <div className="profile__container-name-box">
             <h2 className="profile__container-info-name">{currentUser?.name || 'Гость'}</h2>

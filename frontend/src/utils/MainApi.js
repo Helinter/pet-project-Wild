@@ -86,6 +86,17 @@ export class Api {
     const data = await this._checkResponse(res);
     return data;
   }
+
+  async updateAvatar(avatarLink) {
+    const res = await fetch(`${this.url}/users/me/avatar`, {
+      method: 'PATCH',
+      headers: this._updateHeaders(),
+      body: JSON.stringify({
+        avatar: avatarLink
+      })
+    });
+    return this._checkResponse(res);
+  }
   
 
   // Метод для регистрации пользователя

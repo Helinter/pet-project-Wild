@@ -104,3 +104,21 @@ exports.createUser = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.updateAvatar = async (req, res, next) => {
+  const { avatar } = req.body;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { avatar },
+      { new: true, runValidators: true },
+    );
+    if (updatedUser) {
+      res.json(updatedUser);
+    } else {
+      throw new NotFoundError('User not found');
+    }
+  } catch (error) {
+    next(error);
+  }
+};
