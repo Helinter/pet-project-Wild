@@ -32,8 +32,11 @@ mongoose.connect(MONGODB_URI, {
 
 const userController = require('./controllers/userController');
 const router = require('./routes/routes');
-
 app.use(router);
+
+
+const cardRouter = require('./routes/cards');
+app.use(cardRouter);
 
 // Роут для логина
 app.post('/signin', celebrate({ body: userValidationSchema }), userController.login);
