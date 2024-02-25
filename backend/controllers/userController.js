@@ -10,14 +10,14 @@ const saltRounds = 10;
 // Получение информации о пользователе
 exports.getUserInfo = (req, res) => {
   const {
-    _id, name, email, bio, age
+    _id, name, email, bio, age, avatar
   } = req.user;
 
   // Выводим в консоль данные перед отправкой ответа клиенту
-  console.log('Данные пользователя:', { _id, name, email, bio, age });
+  console.log('Данные пользователя:', { _id, name, email, bio, age, avatar });
 
   res.status(200).json({
-    _id, name, email, bio, age
+    _id, name, email, bio, age, avatar
   });
 };
 
@@ -60,6 +60,7 @@ exports.login = async (req, res, next) => {
           email: user.email,
           bio: user.bio,
           age: user.age,
+          avatar: user.avatar,
         },
         NODE_ENV === 'production' ? JWT_SECRET : '7e48151e23b2943091c18f0e3e6e0c6c625f514b47d726c773a39df19eac1e0e',
         { expiresIn: '1w' },
