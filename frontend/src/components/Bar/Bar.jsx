@@ -24,7 +24,7 @@ const Bar = () => {
       </div>
       <ul className="bar__nav-links">
         <li className="bar__nav-link-box">
-          <Link to="/home" className={`bar__nav-link ${selectedLink === '/' ? 'bar__nav-link-selected' : ''}`}>
+          <Link to="/home" className={`bar__nav-link ${selectedLink === '/home' ? 'bar__nav-link-selected' : ''}`}>
             <img className="bar__nav-link-icon" src={Home} alt="Главная" />
             Главная
           </Link>
@@ -33,12 +33,6 @@ const Bar = () => {
           <Link to="/search" className={`bar__nav-link ${selectedLink === '/search' ? 'bar__nav-link-selected' : ''}`}>
             <img className="bar__nav-link-icon" src={Search} alt="Поиск" />
             Поиск
-          </Link>
-        </li>
-        <li className="bar__nav-link-box">
-          <Link to="/friends" className={`bar__nav-link ${selectedLink === '/friends' ? 'bar__nav-link-selected' : ''}`}>
-            <img className="bar__nav-link-icon" src={Friends} alt="Друзья" />
-            Друзья
           </Link>
         </li>
         <li className="bar__nav-link-box">

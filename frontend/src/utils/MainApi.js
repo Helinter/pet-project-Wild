@@ -125,6 +125,52 @@ export class Api {
 
     return Promise.reject(`Ошибка: ${res.status}`);
   }
+
+  // Метод для получения карточек с сервера
+  async getCards() {
+    const token = localStorage.getItem('token');
+  
+    if (!token) {
+      return Promise.reject('Токен отсутствует');
+    }
+    const res = await fetch(`${this.url}/cards`, {
+      headers: this._updateHeaders(),
+    });
+    return this._checkResponse(res);
+  }
+
+// Метод для добавления новой карточки на сервер
+async addCard(name, link) {
+  const res = await fetch(`${this.url}/cards`, {
+    method: 'POST',
+    headers: this._updateHeaders(),
+    body: JSON.stringify({
+      name: name,
+      link: link
+    })
+  });
+  return this._checkResponse(res);
+}
+
+// Метод для удаления карточки с сервера
+async deleteCard(cardId) {
+   
+  const res = await fetch(`${this.url}/cards/${cardId}`, {
+    method: 'DELETE',
+    headers: this._updateHeaders(),
+  });
+  return this._checkResponse(res);
+}
+
+async changeLikeCardStatus(cardId, isLiked) {
+  const method = isLiked ? 'PUT' : 'DELETE';
+  const res = await fetch(`${this.url}/cards/${cardId}/likes`, {
+    method,
+    headers: this._updateHeaders(),
+  });
+  return this._checkResponse(res);
+}
+
 }
 
 export const api = new Api(apiConfig);

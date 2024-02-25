@@ -3,13 +3,14 @@
   flex-direction: column;
   justify-content: center;
   height: 100%;
-  max-width: 670px;
+  max-width: 850px;
 }
 
 .profile__container {
   display: flex;
   flex-direction: row;
   margin-bottom: 30px;
+  margin-top: 40px;
 }
 
 .profile__container-photo {
@@ -93,7 +94,7 @@
 
 .profile__photos {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
   gap: 32px;
   margin-top: 30px;
@@ -101,10 +102,7 @@
 
 
 .profile__photos img {
-  width: 136px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 30px;
+  
 }
 
 .profile__container-avatar-button {

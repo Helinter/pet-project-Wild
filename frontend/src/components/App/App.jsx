@@ -12,7 +12,10 @@ import Friends from '../Friends/Friends';
 import Messages from '../Messages/Messages';
 import Profile from '../Profile/Profile';
 import EditProfilePopup from '../Popup/EditProfilePopup';
-import EditAvatarPopup from '../Popup/EditAvatarPopup'
+import EditAvatarPopup from '../Popup/EditAvatarPopup';
+import AddCardPopup from '../Popup/AddCardPopup';
+import ImagePopup from '../Popup/ImagePopup';
+
 
 function App() {
   const navigate = useNavigate();
@@ -23,6 +26,11 @@ function App() {
   const { currentUser, updateCurrentUser } = useCurrentUser();
   const [isEditProfilePopupOpen, setEditProfilePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = useState(false);
+  const [isAddCardPopupOpen, setAddCardPopupOpen] = useState(false);
+  const [isImagePopupOpen, setImagePopupOpen] = useState(false);
+
+  const [cards, setCards] = useState([]);
+  const [selectedCard, setSelectedCard] = useState(null);
 
   useEffect(() => {
     api.checkToken()
@@ -52,9 +60,15 @@ function App() {
     setEditAvatarPopupOpen(true);
   };
 
+  const handleAddCardClick = () => {
+    setAddCardPopupOpen(true);
+  };
+
   const closeAllPopups = () => {
     setEditProfilePopupOpen(false);
     setEditAvatarPopupOpen(false);
+    setAddCardPopupOpen(false);
+    setImagePopupOpen(false);
   };
 
   const handleLogout = () => {
@@ -73,6 +87,18 @@ function App() {
       console.error('Ошибка при обновлении данных пользователя:', error);
     }
   };
+
+  const handleAddCard = async (name, link) => {
+    try {
+      const res = await api.addCard(name, link);
+      console.log('card added: ', res);
+      setCards([...cards, res]);
+      closeAllPopups();
+    } catch (error) {
+      console.error('Ошибка при добавлении карточки:', error);
+    }
+  };
+  
   
 
   const handleUpdateAvatar = async (avatarLink) => {
@@ -94,9 +120,35 @@ function App() {
     }
 };
 
+const handleLikeClick = (card) => {
+  const isLiked = card.likes.some(i => i === currentUser._id);
 
+  api.changeLikeCardStatus(card._id, !isLiked)
+    .then((newCard) => {
+      setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+    })
+    .catch((error) => {
+      console.error('Ошибка при загрузке данных:', error);
+    });
+    
+}
 
+const handleDeleteClick = (card) => {
+  api.deleteCard(card._id)
+    .then(() => {
+      // Создаем новый массив, исключая удаленную карточку
+      const newCards = cards.filter((c) => c._id !== card._id);
+      setCards(newCards);
+    })
+    .catch((error) => {
+      console.error('Ошибка при удалении карточки:', error);
+    });
+};
 
+const handleCardClick = (card) => {
+    setSelectedCard(card);
+    setImagePopupOpen(true);
+  };
 
 
   return (
@@ -110,11 +162,13 @@ function App() {
           <Route path="/search" element={<Search />} />
           <Route path="/friends" element={<Friends />} />
           <Route path="/messages" element={<Messages />} />
-          <Route path="/profile" element={<Profile updateCurrentUser={updateCurrentUser} currentUser={currentUser} handleLogout={handleLogout} handleEditAvatarClick={handleEditAvatarClick} handleEditProfileClick={handleEditProfileClick} />} />
+          <Route path="/profile" element={<Profile handleCardClick={handleCardClick} cards={cards} setCards={setCards} handleLikeClick={handleLikeClick} handleDeleteClick={handleDeleteClick} handleAddCardClick={handleAddCardClick} updateCurrentUser={updateCurrentUser} currentUser={currentUser} handleLogout={handleLogout} handleEditAvatarClick={handleEditAvatarClick} handleEditProfileClick={handleEditProfileClick} />} />
         </Route>
       </Routes>
       <EditProfilePopup closeAllPopups={closeAllPopups} isOpen={isEditProfilePopupOpen} handleUpdateUser={handleUpdateUser} />
       <EditAvatarPopup closeAllPopups={closeAllPopups} isOpen={isEditAvatarPopupOpen} handleUpdateAvatar={handleUpdateAvatar} />
+      <AddCardPopup closeAllPopups={closeAllPopups} isOpen={isAddCardPopupOpen} handleAddCard={handleAddCard} />
+      <ImagePopup link={selectedCard?.link} name={selectedCard?.name} isOpen={isImagePopupOpen} onClose={closeAllPopups} />
     </section>
   );
 }

@@ -1,10 +1,26 @@
 import AddButton from '../../images/add-square-02.svg';
-import Photo from '../../images/icons/photo_2024-01-06_15-31-50.jpg';
-import Tulen from '../../images/1655674618_42-kartinkin-net-p-kartinki-tyulenei-45.jpg';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import Card from '../Card/Card';
+import { api } from '../../utils/MainApi';
 
-function Profile({ currentUser, handleLogout, handleEditAvatarClick, handleEditProfileClick}) {
+function Profile({ handleCardClick, setCards, cards, handleDeleteClick, handleLikeClick, handleAddCardClick, currentUser, handleLogout, handleEditAvatarClick, handleEditProfileClick}) {
 
+  useEffect(() => {
+    // Получение карточек с сервера
+    const fetchCards = async () => {
+      try {
+        const cardsData = await api.getCards();
+        // Отфильтровать карточки по owner === currentUser._id
+        const filteredCards = cardsData.filter(card => card.owner === currentUser._id);
+        setCards(filteredCards);
+        console.log('карточки пользователя: ', filteredCards);
+      } catch (error) {
+        console.error('Ошибка при получении карточек:', error);
+      }
+    };
+
+    fetchCards();
+  }, [currentUser]);
 
   return (
 
@@ -28,24 +44,23 @@ function Profile({ currentUser, handleLogout, handleEditAvatarClick, handleEditP
       <div className="momentous">
           <div className="momentous__item">
             <button className='add-button'>
-            <img src={AddButton} alt="" className="momentous__item-icon" />
+            <img src={AddButton} onClick={handleAddCardClick} alt="" className="momentous__item-icon" />
             </button>
           </div>
         </div>
 
 
         <div className="profile__photos">
-          <img src={Tulen} alt="" />
-          <img src={Tulen} alt="" />
-          <img src={Tulen} alt="" />
-          <img src={Tulen} alt="" />
-          <img src={Tulen} alt="" />
-          <img src={Tulen} alt="" />
-          <img src={Tulen} alt="" />
-          <img src={Tulen} alt="" />
-          <img src={Tulen} alt="" />
-          <img src={Tulen} alt="" />
-        </div>
+        {cards.map(card => (
+          <Card
+            key={card._id}
+            card={card}
+            handleClick={handleCardClick}
+            handleLikeClick={handleLikeClick}
+            handleDeleteClick={handleDeleteClick}
+          />
+        ))}
+      </div>
 
     </section>
 
