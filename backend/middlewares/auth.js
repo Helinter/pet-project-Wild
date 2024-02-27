@@ -23,6 +23,7 @@ const authMiddleware = (req, res, next) => {
     console.error('Verification error:', error.message);
     return next(new UnauthorizedError('Invalid token'));
   }
+  
 };
 
 module.exports = { authMiddleware };

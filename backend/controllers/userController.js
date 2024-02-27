@@ -13,9 +13,6 @@ exports.getUserInfo = (req, res) => {
     _id, name, email, bio, age, avatar
   } = req.user;
 
-  // Выводим в консоль данные перед отправкой ответа клиенту
-  console.log('Данные пользователя:', { _id, name, email, bio, age, avatar });
-
   res.status(200).json({
     _id, name, email, bio, age, avatar
   });

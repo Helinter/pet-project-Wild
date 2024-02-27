@@ -1,13 +1,12 @@
 .messages {
   display: flex;
   flex-direction: row;
-  min-width: 850px;
 }
 
 .messages-list {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: 300px;
   height: 100%;
 
 }
@@ -34,7 +33,7 @@
 .messages-list__list {
   display: flex;
   flex-direction: column;
-  gap: 70px;
+  gap: 30px;
   max-width: 340px;
   align-self: center;
   width: 100%;
@@ -44,7 +43,12 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  cursor: pointer;
+  border-radius: 30px;
+}
 
+.messages-list__list-item_selected{
+  background-color: #434343;
 }
 
 .messages-list__list-item__photo {
@@ -69,13 +73,15 @@
 }
 
 
-
 .messages-chat {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  max-width: 600px;
+  min-width: 450px;
   height: 100%;
   border-left: 1px solid #434343;
+  position: fixed;
+  right: 0;
 }
 
 .messages-chat-header {
@@ -132,6 +138,12 @@
   padding-right: 15px;
 }
 
+.messages-chat-chat-message-owners{
+  background-color:lightskyblue;
+  margin-left: auto;
+  color: black;
+}
+
 .chat-input-container {
   display: flex;
   justify-content: center;
@@ -158,10 +170,16 @@
   position: absolute;
   top: 13px;
   right: 50px;
+  width: 24px;
+  cursor: pointer;
 }
 
-.chat-input-container-icon:first-child {
-
+.chat-input-container-icon:nth-child(2) {
   top: 13px;
   right: 84px;
+}
+
+.chat-input-container-icon:nth-child(3) {
+  top: 13px;
+  right: 118px;
 }

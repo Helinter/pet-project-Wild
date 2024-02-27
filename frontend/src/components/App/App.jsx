@@ -50,7 +50,7 @@ function App() {
       setIsLogedin(false);
     }
   }, []);
-  
+
 
   const handleEditProfileClick = () => {
     setEditProfilePopupOpen(true);
@@ -98,54 +98,54 @@ function App() {
       console.error('Ошибка при добавлении карточки:', error);
     }
   };
-  
-  
+
+
 
   const handleUpdateAvatar = async (avatarLink) => {
     try {
-        const res = await api.updateAvatar(avatarLink);
-        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || {}; // Инициализируем как пустой объект, если отсутствует
+      const res = await api.updateAvatar(avatarLink);
+      let currentUser = JSON.parse(localStorage.getItem('currentUser')) || {}; // Инициализируем как пустой объект, если отсутствует
 
-        // Обновляем или создаем поле аватара
-        currentUser = {
-            ...currentUser,
-            avatar: res.user?.avatar || avatarLink // Используем аватар из ответа сервера, если он есть, в противном случае используем переданный avatarLink
-        };
+      // Обновляем или создаем поле аватара
+      currentUser = {
+        ...currentUser,
+        avatar: res.user?.avatar || avatarLink // Используем аватар из ответа сервера, если он есть, в противном случае используем переданный avatarLink
+      };
 
-        localStorage.setItem('currentUser', JSON.stringify(currentUser));
-        updateCurrentUser(currentUser);
-        closeAllPopups();
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      updateCurrentUser(currentUser);
+      closeAllPopups();
     } catch (error) {
-        console.error('Ошибка при обновлении аватара:', error);
+      console.error('Ошибка при обновлении аватара:', error);
     }
-};
+  };
 
-const handleLikeClick = (card) => {
-  const isLiked = card.likes.some(i => i === currentUser._id);
+  const handleLikeClick = (card) => {
+    const isLiked = card.likes.some(i => i === currentUser._id);
 
-  api.changeLikeCardStatus(card._id, !isLiked)
-    .then((newCard) => {
-      setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-    })
-    .catch((error) => {
-      console.error('Ошибка при загрузке данных:', error);
-    });
-    
-}
+    api.changeLikeCardStatus(card._id, !isLiked)
+      .then((newCard) => {
+        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+      })
+      .catch((error) => {
+        console.error('Ошибка при загрузке данных:', error);
+      });
 
-const handleDeleteClick = (card) => {
-  api.deleteCard(card._id)
-    .then(() => {
-      // Создаем новый массив, исключая удаленную карточку
-      const newCards = cards.filter((c) => c._id !== card._id);
-      setCards(newCards);
-    })
-    .catch((error) => {
-      console.error('Ошибка при удалении карточки:', error);
-    });
-};
+  }
 
-const handleCardClick = (card) => {
+  const handleDeleteClick = (card) => {
+    api.deleteCard(card._id)
+      .then(() => {
+        // Создаем новый массив, исключая удаленную карточку
+        const newCards = cards.filter((c) => c._id !== card._id);
+        setCards(newCards);
+      })
+      .catch((error) => {
+        console.error('Ошибка при удалении карточки:', error);
+      });
+  };
+
+  const handleCardClick = (card) => {
     setSelectedCard(card);
     setImagePopupOpen(true);
   };
@@ -168,7 +168,7 @@ const handleCardClick = (card) => {
       <EditProfilePopup closeAllPopups={closeAllPopups} isOpen={isEditProfilePopupOpen} handleUpdateUser={handleUpdateUser} />
       <EditAvatarPopup closeAllPopups={closeAllPopups} isOpen={isEditAvatarPopupOpen} handleUpdateAvatar={handleUpdateAvatar} />
       <AddCardPopup closeAllPopups={closeAllPopups} isOpen={isAddCardPopupOpen} handleAddCard={handleAddCard} />
-      <ImagePopup link={selectedCard?.link} name={selectedCard?.name} isOpen={isImagePopupOpen} onClose={closeAllPopups} cards={cards} setSelectedCard={setSelectedCard}/>
+      <ImagePopup link={selectedCard?.link} name={selectedCard?.name} isOpen={isImagePopupOpen} onClose={closeAllPopups} cards={cards} setSelectedCard={setSelectedCard} />
     </section>
   );
 }

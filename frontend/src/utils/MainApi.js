@@ -162,6 +162,7 @@ async deleteCard(cardId) {
   return this._checkResponse(res);
 }
 
+//метод для лайка или дизлайка
 async changeLikeCardStatus(cardId, isLiked) {
   const method = isLiked ? 'PUT' : 'DELETE';
   const res = await fetch(`${this.url}/cards/${cardId}/likes`, {
@@ -170,6 +171,55 @@ async changeLikeCardStatus(cardId, isLiked) {
   });
   return this._checkResponse(res);
 }
+
+//метод для получания всех чатов пользователя
+async getUserChats() {
+  try {
+    const res = await fetch(`${this.url}/chats`, {
+      method: 'GET',
+      headers: this._updateHeaders(),
+    });
+
+    return this._checkResponse(res);
+  } catch (error) {
+    console.error('Error fetching user chats:', error);
+    return Promise.reject(`Error fetching user chats: ${error.message}`);
+  }
+}
+
+
+//метод для создания чатов
+async createChat(user1Id, user2Id) {
+  try {
+    const res = await fetch(`${this.url}/chats`, {
+      method: 'POST',
+      headers: this._updateHeaders(),
+      body: JSON.stringify({ user1Id, user2Id }),
+    });
+
+    return this._checkResponse(res);
+  } catch (error) {
+    console.error('Error creating chat:', error);
+    return Promise.reject(`Error creating chat: ${error.message}`);
+  }
+}
+
+//метод для отправки сообщения
+async sendMessage(senderId, chatId, content) {
+  try {
+    const res = await fetch(`${this.url}/chats/messages`, {
+      method: 'POST',
+      headers: this._updateHeaders(),
+      body: JSON.stringify({ senderId, chatId, content }),
+    });
+
+    return this._checkResponse(res);
+  } catch (error) {
+    console.error('Error sending message:', error);
+    return Promise.reject(`Error sending message: ${error.message}`);
+  }
+}
+
 
 }
 
