@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useCurrentUser } from '../../context/CurrentUserContext';
 import io from 'socket.io-client';
 import AddMedia from '../../images/icons/addMedia.svg';
@@ -13,6 +13,24 @@ function Messages() {
   const [chats, setChats] = useState([]);
   const [selectedChatId, setSelectedChatId] = useState(null);
   const [messageInput, setMessageInput] = useState('');
+  const messagesChatRef = useRef(null);
+
+// При монтировании компонента проверяем localStorage
+useEffect(() => {
+  console.log("при монтировании сохраненный чат", localStorage.selectedChatId);
+  const savedChatId = localStorage.getItem('selectedChatId');
+  if (savedChatId) {
+    setSelectedChatId(savedChatId);
+  }
+}, []);
+
+// Сохраняем выбранный чат в localStorage при его изменении
+useEffect(() => {
+  if (selectedChatId !== null) {
+    localStorage.setItem('selectedChatId', selectedChatId);
+    console.log("новый сохраненный чат", localStorage.selectedChatId);
+  }
+}, [selectedChatId]);
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -38,6 +56,7 @@ function Messages() {
           return chat;
         });
       });
+      scrollToBottom();
     };
 
     socket.on('newMessage', handleNewMessage);
@@ -59,6 +78,12 @@ function Messages() {
   const handleChatSelect = (chat) => {
     setSelectedChatId(chat.chat._id);
   };
+
+// Функция для прокрутки контейнера сообщений вниз
+const scrollToBottom = () => {
+  messagesChatRef.current.scrollTop = messagesChatRef.current.scrollHeight;
+};
+
 
   const handleMessageSend = async () => {
     if (!selectedChatId || !messageInput.trim()) return;
@@ -88,10 +113,19 @@ function Messages() {
       });
 
       setMessageInput('');
+      scrollToBottom(); 
     } catch (error) {
       console.error('Error sending message:', error);
     }
   };
+
+  const getMessageTime = (timestamp) => {
+    const date = new Date(timestamp);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    return `${hours}:${minutes}`;
+  };
+  
 
   return (
     <section className="messages">
@@ -111,7 +145,7 @@ function Messages() {
           ))}
         </div>
       </div>
-
+      {selectedChatId && (
       <div className="messages-chat">
         <div className="messages-chat-header">
           {selectedChatId && (
@@ -122,13 +156,14 @@ function Messages() {
             </>
           )}
         </div>
-        <div className="messages-chat-chat">
+        <div className="messages-chat-chat" ref={messagesChatRef}>
           {selectedChatId && chats.find(chat => chat.chat._id === selectedChatId)?.chat?.messages.map((message, index) => (
             <p
               key={index}
               className={`messages-chat-chat-message ${message.senderId === currentUser._id ? 'messages-chat-chat-message-owners' : ''}`}
             >
               {message.content}
+              <p className="messages-chat-chat-message-time">{getMessageTime(message.timestamp)}</p>
             </p>
           ))}
         </div>
@@ -151,6 +186,7 @@ function Messages() {
           />
         </div>
       </div>
+      )}
     </section>
   );
 }

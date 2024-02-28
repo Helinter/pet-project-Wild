@@ -6,24 +6,15 @@
 .messages-list {
   display: flex;
   flex-direction: column;
-  width: 300px;
+  min-width: 400px;
   height: 100%;
-
+  margin-left: 40px;
 }
 
 .messages-list__name {
   margin: 0;
   padding: 0;
-  margin-top: 40px;
-  margin-bottom: 45px;
-  max-width: 340px;
-  align-self: center;
-  width: 100%;
-}
-
-.messages-list__text {
-  margin: 0;
-  padding: 0;
+  margin-top: 20px;
   margin-bottom: 45px;
   max-width: 340px;
   align-self: center;
@@ -33,8 +24,7 @@
 .messages-list__list {
   display: flex;
   flex-direction: column;
-  gap: 30px;
-  max-width: 340px;
+  gap: 10px;
   align-self: center;
   width: 100%;
 }
@@ -45,9 +35,10 @@
   align-items: center;
   cursor: pointer;
   border-radius: 30px;
+  padding-right: 10px;
 }
 
-.messages-list__list-item_selected{
+.messages-list__list-item_selected {
   background-color: #434343;
 }
 
@@ -87,7 +78,7 @@
 .messages-chat-header {
   display: flex;
   flex-direction: row;
-  margin-top: 40px;
+  margin-top: 20px;
   padding-bottom: 16px;
   border-bottom: 1px solid #434343;
   align-items: center;
@@ -116,14 +107,17 @@
   margin-right: 56px;
 }
 
+::-webkit-scrollbar {
+  width: 0;
+}
+
 .messages-chat-chat {
   display: flex;
   flex-direction: column;
   align-items: baseline;
-  gap: 23px;
-  margin-top: 51px;
-  max-width: 360px;
-  margin-left: 39px;
+  max-width: 430px;
+  margin-left: 10px;
+  overflow-y: auto;
 }
 
 .messages-chat-chat-message {
@@ -132,14 +126,23 @@
   background-color: #434343;
   border-radius: 23px;
   max-width: 250px;
-  padding-top: 19px;
-  padding-bottom: 19px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   padding-left: 15px;
   padding-right: 15px;
+  text-align: right;
+  margin-bottom: 5px;
+    margin-top: 5px;
 }
 
-.messages-chat-chat-message-owners{
-  background-color:lightskyblue;
+.messages-chat-chat-message-time {
+  font-size: 10px;
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
+.messages-chat-chat-message-owners {
+  background-color: lightskyblue;
   margin-left: auto;
   color: black;
 }
@@ -148,7 +151,7 @@
   display: flex;
   justify-content: center;
   margin-top: auto;
-  margin-bottom: 40px;
+  margin-bottom: 10px;
   position: relative;
 }
 
