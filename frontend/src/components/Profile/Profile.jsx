@@ -1,5 +1,5 @@
 import AddButton from '../../images/add-square-02.svg';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Card from '../Card/Card';
 import { api } from '../../utils/MainApi';
 
@@ -13,7 +13,6 @@ function Profile({ handleCardClick, setCards, cards, handleDeleteClick, handleLi
         // Отфильтровать карточки по owner === currentUser._id
         const filteredCards = cardsData.filter(card => card.owner === currentUser._id);
         setCards(filteredCards);
-        console.log('карточки пользователя: ', filteredCards);
       } catch (error) {
         console.error('Ошибка при получении карточек:', error);
       }

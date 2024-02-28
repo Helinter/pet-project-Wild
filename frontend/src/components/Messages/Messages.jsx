@@ -1,16 +1,17 @@
+import React, { useState, useEffect } from 'react';
+import { useCurrentUser } from '../../context/CurrentUserContext';
+import io from 'socket.io-client';
 import AddMedia from '../../images/icons/addMedia.svg';
 import Micro from '../../images/icons/micro.svg';
 import Send from '../../images/icons8-бумажный-самолетик-64 (1).png';
 import { api } from '../../utils/MainApi';
-import React, { useState, useEffect } from 'react';
-import { useCurrentUser } from '../../context/CurrentUserContext';
-import io from 'socket.io-client';
 
 const socket = io('http://localhost:2999');
+
 function Messages() {
-  const { currentUser, updateCurrentUser } = useCurrentUser();
+  const { currentUser } = useCurrentUser();
   const [chats, setChats] = useState([]);
-  const [selectedChat, setSelectedChat] = useState(null);
+  const [selectedChatId, setSelectedChatId] = useState(null);
   const [messageInput, setMessageInput] = useState('');
 
   useEffect(() => {
@@ -26,42 +27,67 @@ function Messages() {
     fetchChats();
   }, []);
 
- useEffect(() => {
-  // Подписка на событие нового сообщения от сервера сокетов
-  socket.on('newMessage', (updatedChat) => {
-
-    
-    console.log('Received new message:', updatedChat);
-    
-    // Обновляем состояние чата с новым сообщением
-    setChats(prevChats => {
-      return prevChats.map(chat => {
-        if (chat.chat._id === updatedChat.chat._id) {
-          return { ...chat, chat: updatedChat.chat };
-        }
-        return chat;
+  useEffect(() => {
+    const handleNewMessage = (updatedChat) => {
+      console.log('получено сообщение:', updatedChat);
+      setChats(prevChats => {
+        return prevChats.map(chat => {
+          if (chat.chat && chat.chat._id === updatedChat.chat._id) {
+            return { ...chat, chat: updatedChat.chat };
+          }
+          return chat;
+        });
       });
-    });
-  });
+    };
 
-  // Отписка от событий при размонтировании компонента
-  return () => {
-    socket.off('newMessage');
-  };
-}, []);
+    socket.on('newMessage', handleNewMessage);
 
-  
+    return () => {
+      socket.off('newMessage', handleNewMessage);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (selectedChatId) {
+      const isChatStillExists = chats.some(chat => chat.chat._id === selectedChatId);
+      if (!isChatStillExists) {
+        setSelectedChatId(null);
+      }
+    }
+  }, [chats]);
 
   const handleChatSelect = (chat) => {
-    setSelectedChat(chat);
+    setSelectedChatId(chat.chat._id);
   };
 
   const handleMessageSend = async () => {
-    if (!selectedChat || !messageInput.trim()) return;
+    if (!selectedChatId || !messageInput.trim()) return;
 
     try {
-      await api.sendMessage(currentUser._id, selectedChat.chat._id, messageInput.trim());
-      setMessageInput(''); // Очищаем поле ввода после отправки
+      socket.emit('newMessage', {
+        senderId: currentUser._id,
+        chatId: selectedChatId,
+        content: messageInput.trim()
+      });
+
+      setChats(prevChats => {
+        return prevChats.map(chat => {
+          if (chat.chat._id === selectedChatId) {
+            const messageExists = chat.chat.messages.some(message => message.content === messageInput.trim());
+            if (!messageExists) {
+              const updatedChat = { ...chat };
+              updatedChat.chat.messages.push({
+                senderId: currentUser._id,
+                content: messageInput.trim()
+              });
+              return updatedChat;
+            }
+          }
+          return chat;
+        });
+      });
+
+      setMessageInput('');
     } catch (error) {
       console.error('Error sending message:', error);
     }
@@ -74,8 +100,8 @@ function Messages() {
         <div className="messages-list__list">
           {chats.map((chat) => (
             <div
-              key={chat.chat._id}
-              className={`messages-list__list-item ${selectedChat === chat ? 'messages-list__list-item_selected' : ''}`}
+              key={chat._id}
+              className={`messages-list__list-item ${selectedChatId === chat.chat._id ? 'messages-list__list-item_selected' : ''}`}
               onClick={() => handleChatSelect(chat)}
             >
               <img className="messages-list__list-item__photo" src={chat.otherUser.avatar} alt="photo" />
@@ -88,16 +114,16 @@ function Messages() {
 
       <div className="messages-chat">
         <div className="messages-chat-header">
-          {selectedChat && (
+          {selectedChatId && (
             <>
-              <img className="messages-chat-header__photo" src={selectedChat.otherUser.avatar} alt="photo" />
-              <p className="messages-chat-header__name">{selectedChat.otherUser.name}</p>
+              <img className="messages-chat-header__photo" src={chats.find(chat => chat.chat._id === selectedChatId)?.otherUser.avatar} alt="photo" />
+              <p className="messages-chat-header__name">{chats.find(chat => chat.chat._id === selectedChatId)?.otherUser.name}</p>
               <div className="messages-chat-header__indicator"></div>
             </>
           )}
         </div>
         <div className="messages-chat-chat">
-          {selectedChat && selectedChat.chat.messages.map((message, index) => (
+          {selectedChatId && chats.find(chat => chat.chat._id === selectedChatId)?.chat?.messages.map((message, index) => (
             <p
               key={index}
               className={`messages-chat-chat-message ${message.senderId === currentUser._id ? 'messages-chat-chat-message-owners' : ''}`}
@@ -117,6 +143,11 @@ function Messages() {
             className="chat-input-container__input"
             value={messageInput}
             onChange={(e) => setMessageInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleMessageSend();
+              }
+            }}
           />
         </div>
       </div>

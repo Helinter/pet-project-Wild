@@ -74,35 +74,47 @@ const io = socketio(server, {
   }
 });
 
-
 // Обработка подключения новых клиентов
 io.on('connection', (socket) => {
   console.log('New client connected');
 
-// Обработка события отправки сообщения
-socket.on('sendMessage', async (message) => {
-  try {
-    const { senderId, chatId, content } = message;
-
-    const chat = await Chat.findById(chatId);
-    if (!chat) {
-      console.error('Chat not found');
-      return;
+  // Обработка события отправки сообщения
+  socket.on('newMessage', async (message) => {
+    try {
+      // Создание сообщения в базе данных
+      console.log('получено сообщение');
+      const createdMessage = await createMessage(message);
+      
+      // Отправка сообщения всем клиентам через сокеты
+      console.log('отправка сообщения пользователю', createdMessage);
+      io.emit('newMessage', createdMessage);
+    } catch (error) {
+      console.error('Error handling newMessage event:', error);
     }
-
-    chat.messages.push({ senderId, content });
-    await chat.save();
-
-    // Отправляем обновленный чат всем подписчикам чата
-    io.emit('newMessage', chat);
-  } catch (error) {
-    console.error('Error handling sendMessage event:', error);
-  }
-});
-
+  });
 
   // Обработка отключения клиента
   socket.on('disconnect', () => {
     console.log('Client disconnected');
   });
 });
+
+// Функция для создания сообщения в базе данных
+const createMessage = async (messageData) => {
+  try {
+    const { senderId, chatId, content } = messageData;
+
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      throw new Error('Chat not found');
+    }
+
+    chat.messages.push({ senderId, content });
+    await chat.save();
+
+    return { message: 'Message created successfully', chat };
+  } catch (error) {
+    throw error;
+  }
+};
+
