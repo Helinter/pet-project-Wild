@@ -102,7 +102,7 @@ function Messages() {
       if (otherUser) {
         const createdChat = await api.createChat(currentUser._id, otherUser._id);
         console.log("createdChat :", createdChat);
-  
+
         // Проверяем, что createdChat существует и его _id отсутствует в массиве prevChats
         if (createdChat && !chats.some(chat => chat.chat._id === createdChat._id)) {
           console.log("добавляю чат : ", createdChat);
@@ -110,7 +110,7 @@ function Messages() {
           const updatedChats = await api.getUserChats();
           setChats(updatedChats);
         }
-  
+        setSelectedChatId(createdChat._id);
         setSearchUsername('');
       } else {
         console.log('Пользователь не найден');
@@ -119,8 +119,8 @@ function Messages() {
       console.error('Ошибка при создании чата:', error);
     }
   };
-  
-  
+
+
 
   const handleMessageSend = async () => {
     if (!selectedChatId || (!messageInput.trim() && !selectedImage)) return;
@@ -227,7 +227,7 @@ function Messages() {
                 <>
                   <img className="messages-list__list-item__photo" src={chat.otherUser.avatar} alt="photo" />
                   <p className="messages-list__list-item__name">{chat.otherUser.name}</p>
-                  <p className="messages-list__list-item__name">{chat.otherUser.username}</p>
+                  <p className="messages-list__list-item__name messages-list__list-item__username">{chat.otherUser.username}</p>
                 </>
               )}
               <div className="messages-list__list-item__indicator"></div>

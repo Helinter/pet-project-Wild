@@ -50,6 +50,12 @@
   margin: 0;
   padding: 0;
   margin-left: 31px;
+  width: 80px;
+}
+
+.messages-list__list-item__username{
+  margin-left: auto;
+
 }
 
 .messages-list__list-item__indicator {
