@@ -14,28 +14,30 @@ function Messages() {
   const [selectedChatId, setSelectedChatId] = useState(null);
   const [messageInput, setMessageInput] = useState('');
   const messagesChatRef = useRef(null);
+  const inputFileRef = useRef(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [searchUsername, setSearchUsername] = useState('');
 
-// При монтировании компонента проверяем localStorage
-useEffect(() => {
-  console.log("при монтировании сохраненный чат", localStorage.selectedChatId);
-  const savedChatId = localStorage.getItem('selectedChatId');
-  if (savedChatId) {
-    setSelectedChatId(savedChatId);
-  }
-}, []);
+  // При монтировании компонента проверяем localStorage
+  useEffect(() => {
+    const savedChatId = localStorage.getItem('selectedChatId');
+    if (savedChatId) {
+      setSelectedChatId(savedChatId);
+    }
+  }, []);
 
-// Сохраняем выбранный чат в localStorage при его изменении
-useEffect(() => {
-  if (selectedChatId !== null) {
-    localStorage.setItem('selectedChatId', selectedChatId);
-    console.log("новый сохраненный чат", localStorage.selectedChatId);
-  }
-}, [selectedChatId]);
+  // Сохраняем выбранный чат в localStorage при его изменении
+  useEffect(() => {
+    if (selectedChatId !== null) {
+      localStorage.setItem('selectedChatId', selectedChatId);
+    }
+  }, [selectedChatId]);
 
   useEffect(() => {
     const fetchChats = async () => {
       try {
         const fetchedChats = await api.getUserChats();
+        console.log('fetchedChats : ', fetchedChats)
         setChats(fetchedChats);
       } catch (error) {
         console.error('Error fetching user chats:', error);
@@ -44,6 +46,8 @@ useEffect(() => {
 
     fetchChats();
   }, []);
+
+
 
   useEffect(() => {
     const handleNewMessage = (updatedChat) => {
@@ -79,16 +83,54 @@ useEffect(() => {
     setSelectedChatId(chat.chat._id);
   };
 
-// Функция для прокрутки контейнера сообщений вниз
-const scrollToBottom = () => {
-  messagesChatRef.current.scrollTop = messagesChatRef.current.scrollHeight;
-};
+  // Функция для прокрутки контейнера сообщений вниз
+  const scrollToBottom = () => {
+    if (messagesChatRef.current) {
+      messagesChatRef.current.scrollTop = messagesChatRef.current.scrollHeight;
+    }
+  };
 
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [selectedChatId, chats]);
+
+
+  const handleCreateChat = async () => {
+    try {
+      const otherUser = await api.getUserByUsername(searchUsername);
+      if (otherUser) {
+        const createdChat = await api.createChat(currentUser._id, otherUser._id);
+        console.log("createdChat :", createdChat);
+  
+        // Проверяем, что createdChat существует и его _id отсутствует в массиве prevChats
+        if (createdChat && !chats.some(chat => chat.chat._id === createdChat._id)) {
+          console.log("добавляю чат : ", createdChat);
+          // Обновляем список чатов
+          const updatedChats = await api.getUserChats();
+          setChats(updatedChats);
+        }
+  
+        setSearchUsername('');
+      } else {
+        console.log('Пользователь не найден');
+      }
+    } catch (error) {
+      console.error('Ошибка при создании чата:', error);
+    }
+  };
+  
+  
 
   const handleMessageSend = async () => {
-    if (!selectedChatId || !messageInput.trim()) return;
+    if (!selectedChatId || (!messageInput.trim() && !selectedImage)) return;
 
     try {
+      if (selectedImage) {
+        // Если выбрано изображение, загружаем его
+        await uploadImage();
+      }
+
       socket.emit('newMessage', {
         senderId: currentUser._id,
         chatId: selectedChatId,
@@ -113,11 +155,13 @@ const scrollToBottom = () => {
       });
 
       setMessageInput('');
-      scrollToBottom(); 
+      setSelectedImage(null); // Сбрасываем выбранное изображение
+      scrollToBottom();
     } catch (error) {
       console.error('Error sending message:', error);
     }
   };
+
 
   const getMessageTime = (timestamp) => {
     const date = new Date(timestamp);
@@ -125,67 +169,123 @@ const scrollToBottom = () => {
     const minutes = date.getMinutes();
     return `${hours}:${minutes}`;
   };
-  
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    setSelectedImage(file);
+  };
+
+  // Функция для отправки изображения на сервер
+  const uploadImage = async () => {
+    if (selectedImage) {
+      try {
+        const formData = new FormData();
+        formData.append('image', selectedImage);
+        const response = await api.uploadImage(formData);
+        const imageUrl = response.data.imageUrl; // Предполагается, что сервер вернет URL загруженного изображения
+        // Отправка изображения в чат
+        socket.emit('newImage', {
+          senderId: currentUser._id,
+          chatId: selectedChatId,
+          imageUrl: imageUrl
+        });
+      } catch (error) {
+        console.error('Error uploading image:', error);
+      }
+    }
+  };
 
   return (
     <section className="messages">
       <div className="messages-list">
-        <h2 className="messages-list__name">Чаты</h2>
+        <h2 className="messages-list__name-container"><p className="messages-list__name">Чаты</p>
+          <div className="chats-usersearch-container">
+            <div className="chat-input-container">
+              <img src={Send} alt="Send" className="chat-input-container-icon username-search-icon" onClick={handleCreateChat} />
+              <input
+                type="text"
+                placeholder="@username"
+                className="chat-input-container__input username-search"
+                value={searchUsername}
+                onChange={(e) => setSearchUsername(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleCreateChat();
+                  }
+                }}
+              />
+            </div>
+          </div></h2>
         <div className="messages-list__list">
           {chats.map((chat) => (
             <div
               key={chat._id}
-              className={`messages-list__list-item ${selectedChatId === chat.chat._id ? 'messages-list__list-item_selected' : ''}`}
+              className={`messages-list__list-item ${selectedChatId === chat.chat?._id ? 'messages-list__list-item_selected' : ''}`}
               onClick={() => handleChatSelect(chat)}
             >
-              <img className="messages-list__list-item__photo" src={chat.otherUser.avatar} alt="photo" />
-              <p className="messages-list__list-item__name">{chat.otherUser.name}</p>
+              {chat.otherUser && (
+                <>
+                  <img className="messages-list__list-item__photo" src={chat.otherUser.avatar} alt="photo" />
+                  <p className="messages-list__list-item__name">{chat.otherUser.name}</p>
+                  <p className="messages-list__list-item__name">{chat.otherUser.username}</p>
+                </>
+              )}
               <div className="messages-list__list-item__indicator"></div>
             </div>
           ))}
+
+
+
         </div>
       </div>
       {selectedChatId && (
-      <div className="messages-chat">
-        <div className="messages-chat-header">
-          {selectedChatId && (
-            <>
-              <img className="messages-chat-header__photo" src={chats.find(chat => chat.chat._id === selectedChatId)?.otherUser.avatar} alt="photo" />
-              <p className="messages-chat-header__name">{chats.find(chat => chat.chat._id === selectedChatId)?.otherUser.name}</p>
-              <div className="messages-chat-header__indicator"></div>
-            </>
-          )}
-        </div>
-        <div className="messages-chat-chat" ref={messagesChatRef}>
-          {selectedChatId && chats.find(chat => chat.chat._id === selectedChatId)?.chat?.messages.map((message, index) => (
-            <p
-              key={index}
-              className={`messages-chat-chat-message ${message.senderId === currentUser._id ? 'messages-chat-chat-message-owners' : ''}`}
-            >
-              {message.content}
-              <p className="messages-chat-chat-message-time">{getMessageTime(message.timestamp)}</p>
-            </p>
-          ))}
-        </div>
+        <div className="messages-chat">
+          <div className="messages-chat-header">
+            {selectedChatId && (
+              <>
+                <img className="messages-chat-header__photo" src={chats.find(chat => chat.chat._id === selectedChatId)?.otherUser.avatar} alt="photo" />
+                <p className="messages-chat-header__name">{chats.find(chat => chat.chat._id === selectedChatId)?.otherUser.name}</p>
+                <div className="messages-chat-header__indicator"></div>
+              </>
+            )}
+          </div>
+          <div className="messages-chat-chat" ref={messagesChatRef}>
+            {selectedChatId && chats.find(chat => chat.chat._id === selectedChatId)?.chat?.messages.map((message, index) => (
+              <p
+                key={index}
+                className={`messages-chat-chat-message ${message.senderId === currentUser._id ? 'messages-chat-chat-message-owners' : ''}`}
+              >
+                {message.content}
+                <p className="messages-chat-chat-message-time">{getMessageTime(message.timestamp)}</p>
+              </p>
+            ))}
+          </div>
 
-        <div className="chat-input-container">
-          <img src={AddMedia} alt="addMedia" className="chat-input-container-icon" />
-          <img src={Micro} alt="Micro" className="chat-input-container-icon" />
-          <img src={Send} alt="Send" className="chat-input-container-icon" onClick={handleMessageSend} />
-          <input
-            type="text"
-            placeholder="Сообщение"
-            className="chat-input-container__input"
-            value={messageInput}
-            onChange={(e) => setMessageInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleMessageSend();
-              }
-            }}
-          />
+          <div className="chat-input-container">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              style={{ display: 'none' }}
+              ref={inputFileRef}
+            />
+            <img src={AddMedia} alt="addMedia" className="chat-input-container-icon" onClick={() => inputFileRef.current.click()} />
+            <img src={Micro} alt="Micro" className="chat-input-container-icon" />
+            <img src={Send} alt="Send" className="chat-input-container-icon" onClick={handleMessageSend} />
+            <input
+              type="text"
+              placeholder="Сообщение"
+              className="chat-input-container__input"
+              value={messageInput}
+              onChange={(e) => setMessageInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleMessageSend();
+                }
+              }}
+            />
+          </div>
         </div>
-      </div>
       )}
     </section>
   );

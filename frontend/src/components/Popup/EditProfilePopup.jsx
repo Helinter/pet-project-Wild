@@ -4,11 +4,11 @@ import { useCurrentUser } from '../../context/CurrentUserContext';
 
 export default function EditProfilePopup({ closeAllPopups, isOpen, handleUpdateUser }) {
 
-
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [bio, setBio] = useState('');
   const [age, setAge] = useState('');
+  const [username, setUsername] = useState('');
 
   const { currentUser, updateCurrentUser } = useCurrentUser();
 
@@ -19,6 +19,7 @@ export default function EditProfilePopup({ closeAllPopups, isOpen, handleUpdateU
       setBio(currentUser.bio);
       setEmail(currentUser.email);
       setAge(currentUser.age);
+      setUsername(currentUser.username);
     }
   }, [currentUser, isOpen]);
 
@@ -38,14 +39,18 @@ export default function EditProfilePopup({ closeAllPopups, isOpen, handleUpdateU
     setAge(event.target.value);
   };
 
+  const handleUsernameChange = (event) => {
+    setUsername(event.target.value);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    handleUpdateUser(name, email, bio, age)
-  }
+    handleUpdateUser(name, email, bio, age, username); // Передаем значение юзернейма в функцию обновления пользователя
+  };
 
   return (
     <PopupWithForm
-    onClose={closeAllPopups}
+      onClose={closeAllPopups}
       title="Редактировать профиль"
       name="profileForm"
       isOpen={isOpen}
@@ -103,6 +108,18 @@ export default function EditProfilePopup({ closeAllPopups, isOpen, handleUpdateU
       />
       <span id="formAge-error" className="error"></span>
 
+      <input
+        className="popup__input popup__input_type_job"
+        minLength="3"
+        maxLength="11"
+        type="text"
+        name="formUsername"
+        required
+        placeholder="Юзернейм"
+        value={username}
+        onChange={handleUsernameChange}
+      />
+      <span id="formUsername-error" className="error"></span>
 
     </PopupWithForm>
   );

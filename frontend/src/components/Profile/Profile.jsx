@@ -33,9 +33,9 @@ function Profile({ handleCardClick, setCards, cards, handleDeleteClick, handleLi
             <button onClick={handleLogout} className="profile__container-info-button">Выйти</button>
           </div>
           <div className="profile__container-subs-box">
-            <p className="profile__container-subs-box-item">18 публикаций</p>
-            <p className="profile__container-subs-box-item">99 подписчиков</p>
-            <p className="profile__container-subs-box-item">12 подписок</p>
+            <p className="profile__container-subs-box-item">{cards.length} фото</p>
+            <p className="profile__container-subs-box-item">0 подписчиков</p>
+            <p className="profile__container-subs-box-item">0 подписок</p>
           </div>
           <p className='profile__container-text'>{currentUser?.bio || 'Информация'}</p>
         </div>

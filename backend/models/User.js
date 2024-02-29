@@ -44,7 +44,23 @@ const userSchema = new mongoose.Schema({
       message: 'Invalid avatar URL',
     },
   },
+  username: {
+    type: String,
+    unique: true,
+    minlength: 3,
+    maxlength: 11,
+    default: function() {
+      return this.email.split('@')[0];
+    },
+    validate: {
+      validator: (value) => {
+        return value.startsWith('@');
+      },
+      message: 'Username must start with "@"',
+    },
+  },
 });
+
 
 const User = mongoose.model('User', userSchema);
 

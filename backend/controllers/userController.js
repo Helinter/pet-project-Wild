@@ -10,22 +10,38 @@ const saltRounds = 10;
 // Получение информации о пользователе
 exports.getUserInfo = (req, res) => {
   const {
-    _id, name, email, bio, age, avatar
+    _id, name, email, bio, age, avatar, username
   } = req.user;
 
   res.status(200).json({
-    _id, name, email, bio, age, avatar
+    _id, name, email, bio, age, avatar, username
   });
 };
 
+exports.getUserByUsername = async (req, res, next) => {
+  const { username } = req.params;
+
+  try {
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Возвращаем данные пользователя
+    res.status(200).json(user);
+  } catch (error) {
+    next(error);
+  }
+};
 
 // Обновление информации о пользователе
 exports.updateUserInfo = async (req, res, next) => {
-  const { name, email, age, bio } = req.body;
+  const { name, email, age, bio, username } = req.body;
 
   try {
     // Валидация данных перед обновлением пользователя
-    const validatedData = await userValidationSchema.validateAsync({ name, email, age, bio });
+    const validatedData = await userValidationSchema.validateAsync({ name, email, age, bio, username });
 
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
@@ -58,6 +74,7 @@ exports.login = async (req, res, next) => {
           bio: user.bio,
           age: user.age,
           avatar: user.avatar,
+          username: user.username,
         },
         NODE_ENV === 'production' ? JWT_SECRET : '7e48151e23b2943091c18f0e3e6e0c6c625f514b47d726c773a39df19eac1e0e',
         { expiresIn: '1w' },

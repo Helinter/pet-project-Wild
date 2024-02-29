@@ -5,7 +5,10 @@ const userValidationSchema = Joi.object({
   email: Joi.string().email(),
   password: Joi.string(),
   bio: Joi.string().max(150),
-  age: Joi.number().max(99)
+  age: Joi.number().max(99),
+  username: Joi.string().min(3).max(11).pattern(/^@[\w]+$/).default((value, helpers) => {
+    return '@' + value;
+  }),
 });
 
 module.exports = { userValidationSchema };

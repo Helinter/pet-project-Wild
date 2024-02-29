@@ -77,9 +77,9 @@ function App() {
     navigate('/');
   };
 
-  const handleUpdateUser = async (name, email, bio, age) => {
+  const handleUpdateUser = async (name, email, bio, age, username) => {
     try {
-      const res = await api.updateUserInfo(name, email, bio, age);
+      const res = await api.updateUserInfo(name, email, bio, age, username);
       localStorage.setItem('currentUser', JSON.stringify(res.user));
       updateCurrentUser(res.user);
       closeAllPopups();
@@ -87,6 +87,7 @@ function App() {
       console.error('Ошибка при обновлении данных пользователя:', error);
     }
   };
+  
 
   const handleAddCard = async (name, link) => {
     try {

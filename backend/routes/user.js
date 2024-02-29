@@ -19,6 +19,16 @@ router.get('/users/me', authMiddleware, async (req, res, next) => {
   }
 });
 
+router.get('/users/:username', authMiddleware, async (req, res, next) => {
+  try {
+    // Передача управления контроллеру
+    await userController.getUserByUsername(req, res, next);
+  } catch (error) {
+    // Обработка ошибок
+    next(error);
+  }
+});
+
 router.patch('/users/me', authMiddleware, async (req, res, next) => {
   try {
     // Валидация данных перед передачей контроллеру

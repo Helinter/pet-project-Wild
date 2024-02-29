@@ -1,7 +1,6 @@
 const Chat = require('../models/Chat');
 const User = require('../models/User');
 
-
 exports.getUserChats = async (req, res, next) => {
   try {
     // Получаем ID текущего пользователя из объекта req.user
@@ -19,6 +18,7 @@ exports.getUserChats = async (req, res, next) => {
         otherUser: {
           _id: otherUser._id,
           name: otherUser.name,
+          username: otherUser.username, // Добавляем поле username
           avatar: otherUser.avatar
         }
       };
@@ -61,14 +61,14 @@ exports.createChat = async (req, res, next) => {
 
 exports.createMessage = async (req, res, next) => {
   try {
-    const { senderId, chatId, content } = req.body;
+    const { senderId, chatId, content, images } = req.body;
 
     const chat = await Chat.findById(chatId);
     if (!chat) {
       return res.status(404).json({ message: 'Chat not found' });
     }
 
-    chat.messages.push({ senderId, content });
+    chat.messages.push({ senderId, content, images });
     await chat.save();
 
     res.status(201).json({ message: 'Message created successfully', chat });

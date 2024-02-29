@@ -68,8 +68,23 @@ export class Api {
     return Promise.reject(`Ошибка: ${res.status}`);
   }
 
+  async getUserByUsername(username) {
+    try {
+      const res = await fetch(`${this.url}/users/${username}`, {
+        method: 'GET',
+        headers: this._updateHeaders(),
+      });
+  
+      return this._checkResponse(res);
+    } catch (error) {
+      console.error('Error fetching user by username:', error);
+      return Promise.reject(`Error fetching user by username: ${error.message}`);
+    }
+  }
+  
+
   // Метод для обновления информации о пользователе на сервере
-  async updateUserInfo(name, email, bio, age) {
+  async updateUserInfo(name, email, bio, age, username) {
 
     const res = await fetch(`${this.url}/users/me`, {
       method: 'PATCH',
@@ -79,6 +94,7 @@ export class Api {
         email: email,
         bio: bio,
         age: age,
+        username: username,
 
       })
     });

@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const chatSchema = new mongoose.Schema({
-  
   user1Id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -18,6 +17,7 @@ const chatSchema = new mongoose.Schema({
       ref: 'User'
     },
     content: String,
+    images: [String],
     timestamp: {
       type: Date,
       default: Date.now
