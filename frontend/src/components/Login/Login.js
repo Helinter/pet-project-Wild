@@ -44,7 +44,7 @@ console.log('userData', userData);
               localStorage.setItem('currentUser', JSON.stringify(userData));
             }
           }
-          navigate('/');
+          navigate('/home');
         }
       } catch (error) {
         console.error('Ошибка авторизации:', error);

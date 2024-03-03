@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../../utils/MainApi';
 import { useFormWithValidation } from '../FormValidator/FormValidator';
-import Union from '../../images/Union.svg';
-import Unioner from '../../images/Unioner.svg';
 import { useNavigate } from 'react-router-dom';
 import { setToken } from '../TokenHelper/TokenHelper';
 import { useCurrentUser } from '../../context/CurrentUserContext';
@@ -42,7 +40,7 @@ function Register({ setIsRegistered, setImageSrc, setError, setIsLogedin }) {
         );
         console.log('Успешная регистрация:', response);
         setIsRegistered(true);
-        setImageSrc(Union);
+    
         const res = await api.login(values.email, values.password);
         if (res.token) {
           setToken(res.token);
@@ -59,14 +57,11 @@ function Register({ setIsRegistered, setImageSrc, setError, setIsLogedin }) {
               );
             }
           }
-          navigate('/movies');
+          navigate('/');
         }
       } catch (error) {
         console.error('Ошибка регистрации:', error);
-        setError(
-          error.message || 'Что-то пошло не так! Попробуйте ещё раз.'
-        );
-        setImageSrc(Unioner);
+        
       }
     }
   };

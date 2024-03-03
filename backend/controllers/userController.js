@@ -35,6 +35,22 @@ exports.getUserByUsername = async (req, res, next) => {
   }
 };
 
+exports.getUserById = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user;
+  } catch (error) {
+    throw new Error(`Error fetching user by ID: ${error.message}`);
+  }
+};
+
+
+
 // Обновление информации о пользователе
 exports.updateUserInfo = async (req, res, next) => {
   const { name, email, age, bio, username } = req.body;

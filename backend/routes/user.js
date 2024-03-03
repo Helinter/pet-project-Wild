@@ -19,6 +19,20 @@ router.get('/users/me', authMiddleware, async (req, res, next) => {
   }
 });
 
+router.get('/users/:userId', authMiddleware, async (req, res, next) => {
+  try {
+    // Извлечение userId из req.params
+    const userId = req.params.userId;
+    // Передача управления контроллеру
+    const userInfo = await userController.getUserById(userId);
+    res.json(userInfo);
+  } catch (error) {
+    // Обработка ошибок
+    next(error);
+  }
+});
+
+
 router.get('/users/:username', authMiddleware, async (req, res, next) => {
   try {
     // Передача управления контроллеру

@@ -7,6 +7,7 @@
   align-items:baseline;
   padding-bottom: 25px;
   position: relative;
+  height: 350px;
 }
 
 .element__title {
@@ -93,3 +94,10 @@
   opacity: 0.6;
 }
 
+.element__username{
+  margin-top: 0;
+  margin-bottom: 0;
+  text-align: center;
+  display: flex;
+  margin-left: 21px;
+}

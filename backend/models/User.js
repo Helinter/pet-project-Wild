@@ -52,12 +52,7 @@ const userSchema = new mongoose.Schema({
     default: function() {
       return this.email.split('@')[0];
     },
-    validate: {
-      validator: (value) => {
-        return value.startsWith('@');
-      },
-      message: 'Username must start with "@"',
-    },
+    
   },
 });
 

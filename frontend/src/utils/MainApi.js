@@ -68,6 +68,43 @@ export class Api {
     return Promise.reject(`Ошибка: ${res.status}`);
   }
 
+  async getCardsWithUsername() {
+    try {
+      const res = await fetch(`${this.url}/cards`, {
+        headers: this._updateHeaders(),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        // Загружаем имя пользователя для каждой карточки
+        const cardsWithUsername = await Promise.all(data.map(async card => {
+          const user = await this.getUserById(card.owner);
+          return { ...card, ownerName: user.username };
+        }));
+        return cardsWithUsername;
+      }
+
+      return Promise.reject(`Ошибка: ${res.status}`);
+    } catch (error) {
+      console.error('Error fetching cards with username:', error);
+      return Promise.reject(`Error fetching cards with username: ${error.message}`);
+    }
+  }
+
+  // Метод для получения информации о пользователе по его ID
+  async getUserById(userId) {
+    try {
+      const res = await fetch(`${this.url}/users/${userId}`, {
+        headers: this._updateHeaders(),
+      });
+
+      return this._checkResponse(res);
+    } catch (error) {
+      console.error('Error fetching user by ID:', error);
+      return Promise.reject(`Error fetching user by ID: ${error.message}`);
+    }
+  }
+
   async getUserByUsername(username) {
     try {
       const res = await fetch(`${this.url}/users/${username}`, {

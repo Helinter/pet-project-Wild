@@ -68,10 +68,7 @@ const server = app.listen(PORT, () => {
 });
 
 const io = socketio(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"]
-  }
+  cors: true // Разрешить доступ со всех источников
 });
 
 // Обработка подключения новых клиентов
