@@ -18,9 +18,7 @@ exports.getUserInfo = (req, res) => {
   });
 };
 
-exports.getUserByUsername = async (req, res, next) => {
-  const { username } = req.params;
-
+exports.getUserByUsername = async (username, res, next) => {
   try {
     const user = await User.findOne({ username });
 

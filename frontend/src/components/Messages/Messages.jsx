@@ -102,7 +102,7 @@ function Messages() {
       if (otherUser) {
         const createdChat = await api.createChat(currentUser._id, otherUser._id);
         console.log("createdChat :", createdChat);
-
+  
         // Проверяем, что createdChat существует и его _id отсутствует в массиве prevChats
         if (createdChat && !chats.some(chat => chat.chat._id === createdChat._id)) {
           console.log("добавляю чат : ", createdChat);
@@ -119,6 +119,7 @@ function Messages() {
       console.error('Ошибка при создании чата:', error);
     }
   };
+  
 
 
 

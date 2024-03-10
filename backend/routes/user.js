@@ -33,15 +33,32 @@ router.get('/users/:userId', authMiddleware, async (req, res, next) => {
 });
 
 
-router.get('/users/:username', authMiddleware, async (req, res, next) => {
+router.post('/users/getByUsername', authMiddleware, async (req, res, next) => {
   try {
+    const { username } = req.body;
     // Передача управления контроллеру
-    await userController.getUserByUsername(req, res, next);
+    await userController.getUserByUsername(username, res, next);
   } catch (error) {
     // Обработка ошибок
     next(error);
   }
 });
+
+exports.getUserByUsername = async (username, res, next) => {
+  try {
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Возвращаем данные пользователя
+    res.status(200).json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 router.patch('/users/me', authMiddleware, async (req, res, next) => {
   try {

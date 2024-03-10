@@ -107,9 +107,10 @@ export class Api {
 
   async getUserByUsername(username) {
     try {
-      const res = await fetch(`${this.url}/users/${username}`, {
-        method: 'GET',
+      const res = await fetch(`${this.url}/users/getByUsername`, {
+        method: 'POST',
         headers: this._updateHeaders(),
+        body: JSON.stringify({ username }),
       });
   
       return this._checkResponse(res);
