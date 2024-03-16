@@ -1,10 +1,10 @@
-.element{
+.element {
   width: 250px;
   display: flex;
   flex-wrap: wrap;
   background: #FFFFFF;
   border-radius: 10px;
-  align-items:baseline;
+  align-items: baseline;
   padding-bottom: 25px;
   position: relative;
   height: 350px;
@@ -26,7 +26,7 @@
   max-width: 185px;
 }
 
-.element__likes{
+.element__likes {
   display: flex;
   flex-direction: column;
   margin-left: auto;
@@ -61,11 +61,11 @@
   opacity: 0.5;
 }
 
-.element__like-button_active{
+.element__like-button_active {
   background-image: url(../../images/like-active.svg);
 }
 
-.element__image{
+.element__image {
   border-radius: 10px 10px 0 0;
   margin-bottom: 22px;
   object-fit: cover;
@@ -74,7 +74,7 @@
   cursor: pointer;
 }
 
-.element__delete-button{
+.element__delete-button {
   background: url(../../images/delete-button.svg);
   position: absolute;
   width: 18px;
@@ -94,10 +94,12 @@
   opacity: 0.6;
 }
 
-.element__username{
+.element__username {
   margin-top: 0;
   margin-bottom: 0;
   text-align: center;
   display: flex;
   margin-left: 21px;
+  position: absolute;
+  top: 274px;
 }

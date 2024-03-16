@@ -16,8 +16,7 @@ const chatSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
     },
-    content: String,
-    images: [String],
+    content: mongoose.Schema.Types.Mixed,
     timestamp: {
       type: Date,
       default: Date.now

@@ -17,6 +17,7 @@ function Messages() {
   const inputFileRef = useRef(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [searchUsername, setSearchUsername] = useState('');
+  const [showImageSelectedNotification, setShowImageSelectedNotification] = useState(false);
 
   // При монтировании компонента проверяем localStorage
   useEffect(() => {
@@ -37,7 +38,6 @@ function Messages() {
     const fetchChats = async () => {
       try {
         const fetchedChats = await api.getUserChats();
-        console.log('fetchedChats : ', fetchedChats)
         setChats(fetchedChats);
       } catch (error) {
         console.error('Error fetching user chats:', error);
@@ -101,11 +101,9 @@ function Messages() {
       const otherUser = await api.getUserByUsername(searchUsername);
       if (otherUser) {
         const createdChat = await api.createChat(currentUser._id, otherUser._id);
-        console.log("createdChat :", createdChat);
-  
+
         // Проверяем, что createdChat существует и его _id отсутствует в массиве prevChats
         if (createdChat && !chats.some(chat => chat.chat._id === createdChat._id)) {
-          console.log("добавляю чат : ", createdChat);
           // Обновляем список чатов
           const updatedChats = await api.getUserChats();
           setChats(updatedChats);
@@ -119,7 +117,6 @@ function Messages() {
       console.error('Ошибка при создании чата:', error);
     }
   };
-  
 
 
 
@@ -127,26 +124,34 @@ function Messages() {
     if (!selectedChatId || (!messageInput.trim() && !selectedImage)) return;
 
     try {
+      let content = {
+        text: messageInput.trim(),
+        image: ''
+      }; // Инициализируем содержимое сообщения
+
       if (selectedImage) {
-        // Если выбрано изображение, загружаем его
-        await uploadImage();
+        // Если выбрано изображение, загружаем его и добавляем к содержимому сообщения
+        const imageUrl = await uploadImage();
+        content.image = imageUrl; // Заполняем поле изображения
       }
 
+      // Отправляем сообщение
       socket.emit('newMessage', {
         senderId: currentUser._id,
         chatId: selectedChatId,
-        content: messageInput.trim()
+        content: content // Используем обновленное содержимое сообщения
       });
 
+      // Обновляем чаты, добавляя новое сообщение
       setChats(prevChats => {
         return prevChats.map(chat => {
           if (chat.chat._id === selectedChatId) {
-            const messageExists = chat.chat.messages.some(message => message.content === messageInput.trim());
+            const messageExists = chat.chat.messages.some(message => message.content.text === content.text);
             if (!messageExists) {
               const updatedChat = { ...chat };
               updatedChat.chat.messages.push({
                 senderId: currentUser._id,
-                content: messageInput.trim()
+                content: content
               });
               return updatedChat;
             }
@@ -155,13 +160,32 @@ function Messages() {
         });
       });
 
+      // Очищаем состояния после отправки сообщения
       setMessageInput('');
-      setSelectedImage(null); // Сбрасываем выбранное изображение
+      setSelectedImage(null);
+      setShowImageSelectedNotification(false)
       scrollToBottom();
     } catch (error) {
       console.error('Error sending message:', error);
     }
   };
+
+  // Функция для загрузки изображения и возврата URL
+  const uploadImage = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('image', selectedImage);
+      const response = await api.uploadImage(formData);
+      const imageUrl = response.imageUrl.replace(/\\/g, '/');
+      console.log(imageUrl);
+      return imageUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error; // Проброс ошибки вверх для обработки в handleMessageSend
+    }
+  };
+
+
 
 
   const getMessageTime = (timestamp) => {
@@ -174,32 +198,16 @@ function Messages() {
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     setSelectedImage(file);
+    setShowImageSelectedNotification(true);
   };
 
-  // Функция для отправки изображения на сервер
-  const uploadImage = async () => {
-    if (selectedImage) {
-      try {
-        const formData = new FormData();
-        formData.append('image', selectedImage);
-        const response = await api.uploadImage(formData);
-        const imageUrl = response.data.imageUrl; // Предполагается, что сервер вернет URL загруженного изображения
-        // Отправка изображения в чат
-        socket.emit('newImage', {
-          senderId: currentUser._id,
-          chatId: selectedChatId,
-          imageUrl: imageUrl
-        });
-      } catch (error) {
-        console.error('Error uploading image:', error);
-      }
-    }
-  };
+
 
   return (
     <section className="messages">
       <div className="messages-list">
-        <h2 className="messages-list__name-container"><p className="messages-list__name">Чаты</p>
+        <h2 className="messages-list__name-container">
+          <p className="messages-list__name">Чаты</p>
           <div className="chats-usersearch-container">
             <div className="chat-input-container">
               <img src={Send} alt="Send" className="chat-input-container-icon username-search-icon" onClick={handleCreateChat} />
@@ -216,7 +224,8 @@ function Messages() {
                 }}
               />
             </div>
-          </div></h2>
+          </div>
+        </h2>
         <div className="messages-list__list">
           {chats.map((chat) => (
             <div
@@ -234,9 +243,6 @@ function Messages() {
               <div className="messages-list__list-item__indicator"></div>
             </div>
           ))}
-
-
-
         </div>
       </div>
       {selectedChatId && (
@@ -251,18 +257,30 @@ function Messages() {
             )}
           </div>
           <div className="messages-chat-chat" ref={messagesChatRef}>
-            {selectedChatId && chats.find(chat => chat.chat._id === selectedChatId)?.chat?.messages.map((message, index) => (
-              <p
-                key={index}
-                className={`messages-chat-chat-message ${message.senderId === currentUser._id ? 'messages-chat-chat-message-owners' : ''}`}
-              >
-                {message.content}
-                <p className="messages-chat-chat-message-time">{getMessageTime(message.timestamp)}</p>
-              </p>
-            ))}
-          </div>
 
+            {selectedChatId && chats.find(chat => chat.chat._id === selectedChatId)?.chat?.messages.map((message) => (
+              <React.Fragment key={message._id}>
+                {message.content.image && (
+                  <div className={`messages-chat-chat-message ${message.senderId === currentUser._id ? 'messages-chat-chat-message-owners' : ''}`}>
+                    <img className='uploaded-image' src={encodeURI(message.content.image)} alt="uploaded" />
+                    <p className="messages-chat-chat-message-time">{getMessageTime(message.timestamp)}</p>
+                  </div>
+                )}
+
+                {message.content.text && (
+                  <div className={`messages-chat-chat-message ${message.senderId === currentUser._id ? 'messages-chat-chat-message-owners' : ''}`}>
+                    <p>{message.content.text}</p>
+                    <p className="messages-chat-chat-message-time">{getMessageTime(message.timestamp)}</p>
+                  </div>
+                )}
+              </React.Fragment>
+
+            ))}
+
+
+          </div>
           <div className="chat-input-container">
+
             <input
               type="file"
               accept="image/*"
@@ -285,11 +303,13 @@ function Messages() {
                 }
               }}
             />
+            {showImageSelectedNotification && <div className="image-selected-notification">Изображение выбрано</div>}
           </div>
         </div>
       )}
     </section>
   );
+
 }
 
 export default Messages;

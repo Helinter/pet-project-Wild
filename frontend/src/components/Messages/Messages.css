@@ -211,3 +211,13 @@
     width: 100%;
     display: flex;
 }
+
+.image-selected-notification{
+  color: #34FF12;
+  position: absolute;
+  top: -20px;
+}
+
+.uploaded-image{
+
+}

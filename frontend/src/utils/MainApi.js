@@ -274,6 +274,25 @@ async sendMessage(senderId, chatId, content) {
   }
 }
 
+async uploadImage (formData) {
+  try {
+    const res = await fetch(`${this.url}/upload/image`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error);
+    }
+
+    const data = await res.json();
+    return data; // Предполагается, что сервер возвращает URL загруженного изображения
+  } catch (error) {
+    throw error; // Проброс ошибки
+  }
+};
+
 
 }
 
