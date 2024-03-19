@@ -6,7 +6,7 @@
 .pnp.js
 # testing
 /coverage
-
+/backend/uploads
 
 # misc
 .DS_Store
