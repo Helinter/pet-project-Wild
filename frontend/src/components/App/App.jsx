@@ -162,7 +162,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/search" element={<Search cards={cards} setCards={setCards} onCardClick={handleCardClick} onCardLike={handleLikeClick} onCardDelete={handleDeleteClick} />} />
           <Route path="/friends" element={<Friends />} />
-          <Route path="/messages" element={<Messages />} />
+          <Route path="/messages" element={<Messages handleCardClick={handleCardClick}/>} />
           <Route path="/profile" element={<Profile handleCardClick={handleCardClick} cards={cards} setCards={setCards} handleLikeClick={handleLikeClick} handleDeleteClick={handleDeleteClick} handleAddCardClick={handleAddCardClick} updateCurrentUser={updateCurrentUser} currentUser={currentUser} handleLogout={handleLogout} handleEditAvatarClick={handleEditAvatarClick} handleEditProfileClick={handleEditProfileClick} />} />
         </Route>
       </Routes>

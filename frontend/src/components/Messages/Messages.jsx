@@ -8,7 +8,7 @@ import { api } from '../../utils/MainApi';
 
 const socket = io('http://localhost:2999');
 
-function Messages() {
+function Messages({handleCardClick}) {
   const { currentUser } = useCurrentUser();
   const [chats, setChats] = useState([]);
   const [selectedChatId, setSelectedChatId] = useState(null);
@@ -260,19 +260,22 @@ function Messages() {
 
             {selectedChatId && chats.find(chat => chat.chat._id === selectedChatId)?.chat?.messages.map((message) => (
               <React.Fragment key={message._id}>
+                <div className={`messages-chat-chat-message ${message.senderId === currentUser._id ? 'messages-chat-chat-message-owners' : ''}`}>
                 {message.content.image && (
-                  <div className={`messages-chat-chat-message ${message.senderId === currentUser._id ? 'messages-chat-chat-message-owners' : ''}`}>
-                    <img className='uploaded-image' src={encodeURI(message.content.image)} alt="uploaded" />
-                    <p className="messages-chat-chat-message-time">{getMessageTime(message.timestamp)}</p>
-                  </div>
+                  <img
+                  className='uploaded-image'
+                  src={encodeURI(message.content.image)}
+                  alt="uploaded"
+                  onClick={() => handleCardClick({ link: encodeURI(message.content.image) })}
+                />
+                 
                 )}
 
                 {message.content.text && (
-                  <div className={`messages-chat-chat-message ${message.senderId === currentUser._id ? 'messages-chat-chat-message-owners' : ''}`}>
                     <p>{message.content.text}</p>
-                    <p className="messages-chat-chat-message-time">{getMessageTime(message.timestamp)}</p>
-                  </div>
                 )}
+                <p className="messages-chat-chat-message-time">{getMessageTime(message.timestamp)}</p>
+                </div>
               </React.Fragment>
 
             ))}

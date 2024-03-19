@@ -27,7 +27,13 @@ app.use(helmet());
 const pathToUploads = './uploads';
 
 // Настройка маршрута для обслуживания статических файлов из директории с изображениями
-app.use('/uploads', express.static(pathToUploads));
+app.use('/uploads', express.static(pathToUploads, {
+  setHeaders: (res, path, stat) => {
+    // Установка заголовка Cross-Origin-Resource-Policy
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  }
+}));
+
 
 mongoose.connect(MONGODB_URI, {
 })
