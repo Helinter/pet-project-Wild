@@ -8,6 +8,9 @@ const { userValidationSchema } = require('../middlewares/userValidationSchema');
 const { avatarValidationSchema } = require('../middlewares/avatarValidationSchema');
 const { authMiddleware } = require('../middlewares/auth');
 
+
+router.get('/users', userController.getAllUsers);
+
 // Роуты для обработки запросов
 router.get('/users/me', authMiddleware, async (req, res, next) => {
   try {

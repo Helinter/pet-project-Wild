@@ -56,6 +56,19 @@ export class Api {
     removeToken();
   }
 
+  async getAllUsers() {
+    try {
+      const res = await fetch(`${this.url}/users`, {
+        headers: this._updateHeaders(),
+      });
+  
+      return this._checkResponse(res);
+    } catch (error) {
+      console.error('Error fetching all users:', error);
+      return Promise.reject(`Error fetching all users: ${error.message}`);
+    }
+  }
+
   async getUserInfo() {
    
     const res = await fetch(`${this.url}/users/me`, {

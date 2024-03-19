@@ -151,3 +151,12 @@ exports.updateAvatar = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    next(error);
+  }
+};
