@@ -8,7 +8,7 @@ import { api } from '../../utils/MainApi';
 
 const socket = io('http://localhost:2999');
 
-function Messages({handleCardClick}) {
+function Messages({ handleCardClick }) {
   const { currentUser } = useCurrentUser();
   const [chats, setChats] = useState([]);
   const [selectedChatId, setSelectedChatId] = useState(null);
@@ -18,7 +18,8 @@ function Messages({handleCardClick}) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [searchUsername, setSearchUsername] = useState('');
   const [showImageSelectedNotification, setShowImageSelectedNotification] = useState(false);
-
+  const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
   // При монтировании компонента проверяем localStorage
   useEffect(() => {
     const savedChatId = localStorage.getItem('selectedChatId');
@@ -46,8 +47,6 @@ function Messages({handleCardClick}) {
 
     fetchChats();
   }, []);
-
-
 
   useEffect(() => {
     const handleNewMessage = (updatedChat) => {
@@ -90,11 +89,9 @@ function Messages({handleCardClick}) {
     }
   };
 
-
   useEffect(() => {
     scrollToBottom();
   }, [selectedChatId, chats]);
-
 
   const handleCreateChat = async () => {
     try {
@@ -102,9 +99,7 @@ function Messages({handleCardClick}) {
       if (otherUser) {
         const createdChat = await api.createChat(currentUser._id, otherUser._id);
 
-        // Проверяем, что createdChat существует и его _id отсутствует в массиве prevChats
         if (createdChat && !chats.some(chat => chat.chat._id === createdChat._id)) {
-          // Обновляем список чатов
           const updatedChats = await api.getUserChats();
           setChats(updatedChats);
         }
@@ -118,8 +113,6 @@ function Messages({handleCardClick}) {
     }
   };
 
-
-
   const handleMessageSend = async () => {
     if (!selectedChatId || (!messageInput.trim() && !selectedImage)) return;
 
@@ -127,22 +120,19 @@ function Messages({handleCardClick}) {
       let content = {
         text: messageInput.trim(),
         image: ''
-      }; // Инициализируем содержимое сообщения
+      };
 
       if (selectedImage) {
-        // Если выбрано изображение, загружаем его и добавляем к содержимому сообщения
         const imageUrl = await uploadImage();
-        content.image = imageUrl; // Заполняем поле изображения
+        content.image = imageUrl;
       }
 
-      // Отправляем сообщение
       socket.emit('newMessage', {
         senderId: currentUser._id,
         chatId: selectedChatId,
-        content: content // Используем обновленное содержимое сообщения
+        content: content
       });
 
-      // Обновляем чаты, добавляя новое сообщение
       setChats(prevChats => {
         return prevChats.map(chat => {
           if (chat.chat._id === selectedChatId) {
@@ -160,7 +150,6 @@ function Messages({handleCardClick}) {
         });
       });
 
-      // Очищаем состояния после отправки сообщения
       setMessageInput('');
       setSelectedImage(null);
       setShowImageSelectedNotification(false)
@@ -170,7 +159,6 @@ function Messages({handleCardClick}) {
     }
   };
 
-  // Функция для загрузки изображения и возврата URL
   const uploadImage = async () => {
     try {
       const formData = new FormData();
@@ -181,12 +169,9 @@ function Messages({handleCardClick}) {
       return imageUrl;
     } catch (error) {
       console.error('Error uploading image:', error);
-      throw error; // Проброс ошибки вверх для обработки в handleMessageSend
+      throw error;
     }
   };
-
-
-
 
   const getMessageTime = (timestamp) => {
     const date = new Date(timestamp);
@@ -201,10 +186,35 @@ function Messages({handleCardClick}) {
     setShowImageSelectedNotification(true);
   };
 
+  const handleContextMenu = (event, chat) => {
+    event.preventDefault();
+    setContextMenuVisible(true);
+    console.log('Context menu opened for chat:', chat);
+    setContextMenuPosition({ x: event.clientX, y: event.clientY });
+  };
+  
 
+  const handleCloseContextMenu = () => {
+    setContextMenuVisible(false);
+  };
+
+  const handleDeleteChat = () => {
+    console.log('Удалить чат');
+    api.deleteChat(selectedChatId);
+    setChats(prevChats => prevChats.filter(chat => chat.chat._id !== selectedChatId));
+    setSelectedChatId(null);
+    handleCloseContextMenu();
+  };
+
+  const handleClearChat = () => {
+    console.log('Очистить чат');
+    api.clearChat(selectedChatId);
+    setChats(prevChats => prevChats.map(chat => chat.chat._id === selectedChatId ? { ...chat, chat: { ...chat.chat, messages: [] } } : chat));
+    handleCloseContextMenu();
+  };
 
   return (
-    <section className="messages">
+    <section className="messages" onClick={handleCloseContextMenu}>
       <div className="messages-list">
         <h2 className="messages-list__name-container">
           <p className="messages-list__name">Чаты</p>
@@ -232,6 +242,7 @@ function Messages({handleCardClick}) {
               key={chat._id}
               className={`messages-list__list-item ${selectedChatId === chat.chat?._id ? 'messages-list__list-item_selected' : ''}`}
               onClick={() => handleChatSelect(chat)}
+              onContextMenu={(e) => handleContextMenu(e, chat)} // Добавляем обработчик контекстного меню
             >
               {chat.otherUser && (
                 <>
@@ -242,7 +253,18 @@ function Messages({handleCardClick}) {
               )}
               <div className="messages-list__list-item__indicator"></div>
             </div>
+            
           ))}
+          {contextMenuVisible && (
+        <div className="context-menu" style={{ left: contextMenuPosition.x, top: contextMenuPosition.y }}>
+          <div className="context-menu-item" onClick={handleDeleteChat}>
+            Удалить чат
+          </div>
+          <div className="context-menu-item" onClick={handleClearChat}>
+            Очистить чат
+          </div>
+        </div>
+      )}
         </div>
       </div>
       {selectedChatId && (
@@ -257,33 +279,26 @@ function Messages({handleCardClick}) {
             )}
           </div>
           <div className="messages-chat-chat" ref={messagesChatRef}>
-
             {selectedChatId && chats.find(chat => chat.chat._id === selectedChatId)?.chat?.messages.map((message) => (
               <React.Fragment key={message._id}>
                 <div className={`messages-chat-chat-message ${message.senderId === currentUser._id ? 'messages-chat-chat-message-owners' : ''}`}>
-                {message.content.image && (
-                  <img
-                  className='uploaded-image'
-                  src={encodeURI(message.content.image)}
-                  alt="uploaded"
-                  onClick={() => handleCardClick({ link: encodeURI(message.content.image) })}
-                />
-                 
-                )}
-
-                {message.content.text && (
+                  {message.content.image && (
+                    <img
+                      className='uploaded-image'
+                      src={encodeURI(message.content.image)}
+                      alt="uploaded"
+                      onClick={() => handleCardClick({ link: encodeURI(message.content.image) })}
+                    />
+                  )}
+                  {message.content.text && (
                     <p>{message.content.text}</p>
-                )}
-                <p className="messages-chat-chat-message-time">{getMessageTime(message.timestamp)}</p>
+                  )}
+                  <p className="messages-chat-chat-message-time">{getMessageTime(message.timestamp)}</p>
                 </div>
               </React.Fragment>
-
             ))}
-
-
           </div>
           <div className="chat-input-container">
-
             <input
               type="file"
               accept="image/*"
@@ -310,9 +325,9 @@ function Messages({handleCardClick}) {
           </div>
         </div>
       )}
+      
     </section>
   );
-
 }
 
 export default Messages;

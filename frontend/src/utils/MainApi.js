@@ -9,12 +9,15 @@ export class Api {
 
   // Метод для проверки ответа от сервера
   _checkResponse(res) {
-    if (res.ok) {
+    if (res.status === 204) {
+      // Если ответ сервера "No Content" (код 204), возвращаем пустой объект
+      return {};
+    } else if (res.ok) {
       return res.json();
-      
     }
     return Promise.reject(`Ошибка: ${res.status}`);
   }
+  
 
   // Метод для обновления заголовков с токеном
   _updateHeaders() {
@@ -292,6 +295,34 @@ async uploadImage (formData) {
     throw error; // Проброс ошибки
   }
 };
+
+async clearChat(chatId) {
+  try {
+    const res = await fetch(`${this.url}/chats/${chatId}/clear`, {
+      method: 'DELETE',
+      headers: this._updateHeaders(),
+    });
+
+    return this._checkResponse(res);
+  } catch (error) {
+    console.error('Error clearing chat:', error);
+    return Promise.reject(`Error clearing chat: ${error.message}`);
+  }
+}
+
+async deleteChat(chatId) {
+  try {
+    const res = await fetch(`${this.url}/chats/${chatId}`, {
+      method: 'DELETE',
+      headers: this._updateHeaders(),
+    });
+
+    return this._checkResponse(res);
+  } catch (error) {
+    console.error('Error deleting chat:', error);
+    return Promise.reject(`Error deleting chat: ${error.message}`);
+  }
+}
 
 
 }

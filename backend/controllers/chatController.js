@@ -76,3 +76,31 @@ exports.createMessage = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.deleteChat = async (req, res, next) => {
+  try {
+    const { chatId } = req.params;
+
+    // Удаляем чат по его ID
+    await Chat.findByIdAndDelete(chatId);
+
+    // Отправляем пустой объект в формате JSON в ответе
+    res.status(204).json({});
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.clearChat = async (req, res, next) => {
+  try {
+    const { chatId } = req.params;
+
+    // Очищаем сообщения чата по его ID
+    await Chat.findByIdAndUpdate(chatId, { messages: [] });
+
+    // Отправляем пустой объект в формате JSON в ответе
+    res.status(204).json({});
+  } catch (error) {
+    next(error);
+  }
+};

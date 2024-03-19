@@ -221,3 +221,24 @@
 .uploaded-image{
 width: 100%;
 }
+
+.context-menu {
+  display: flex;
+  position: absolute;
+  z-index: 1000;
+  background-color: #1f1616;
+  border: none;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  color: bisque;
+  flex-direction: column;
+}
+
+.context-menu-item {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.context-menu-item:hover {
+  color: white;
+}
