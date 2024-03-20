@@ -48,9 +48,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     unique: true,
     minlength: 3,
-    maxlength: 11,
+    maxlength: 20,
     default: function() {
-      return this.email.split('@')[0];
+      return `@${this.email.split('@')[0]}`;
     },
     
   },

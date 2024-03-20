@@ -114,8 +114,19 @@ border-radius: 50%;
     outline: none;
     color: bisque;
     width: 150px;
-    position: fixed;
+    position: absolute;
     top: 45px;
-    right: 290px;
+    right: 190px;
+    border-radius: 30px;
+}
+
+.chat-button{
+  background: none;
+    outline: none;
+    color: bisque;
+    width: 150px;
+    position: absolute;
+    top: 85px;
+    right: 190px;
     border-radius: 30px;
 }

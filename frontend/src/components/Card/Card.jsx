@@ -17,7 +17,6 @@ function Card({ card, handleClick, handleLikeClick, handleDeleteClick }) {
       try {
         const user = await api.getUserById(card.owner);
         setOwnerName(user.username);
-        console.log(user.username)
       } catch (error) {
         console.error('Error fetching owner name:', error);
       }

@@ -8,10 +8,9 @@ import { api } from '../../utils/MainApi';
 
 const socket = io('http://localhost:2999');
 
-function Messages({ handleCardClick }) {
+function Messages({ handleCardClick, selectedChatId, setSelectedChatId }) {
   const { currentUser } = useCurrentUser();
   const [chats, setChats] = useState([]);
-  const [selectedChatId, setSelectedChatId] = useState(null);
   const [messageInput, setMessageInput] = useState('');
   const messagesChatRef = useRef(null);
   const inputFileRef = useRef(null);
@@ -20,6 +19,7 @@ function Messages({ handleCardClick }) {
   const [showImageSelectedNotification, setShowImageSelectedNotification] = useState(false);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+
   // При монтировании компонента проверяем localStorage
   useEffect(() => {
     const savedChatId = localStorage.getItem('selectedChatId');
@@ -27,6 +27,13 @@ function Messages({ handleCardClick }) {
       setSelectedChatId(savedChatId);
     }
   }, []);
+
+
+  useEffect(() => {
+    console.log('Selected chat id:', selectedChatId);
+    // Другой код...
+  }, [selectedChatId]);
+
 
   // Сохраняем выбранный чат в localStorage при его изменении
   useEffect(() => {
@@ -69,14 +76,6 @@ function Messages({ handleCardClick }) {
     };
   }, []);
 
-  useEffect(() => {
-    if (selectedChatId) {
-      const isChatStillExists = chats.some(chat => chat.chat._id === selectedChatId);
-      if (!isChatStillExists) {
-        setSelectedChatId(null);
-      }
-    }
-  }, [chats]);
 
   const handleChatSelect = (chat) => {
     setSelectedChatId(chat.chat._id);
@@ -188,11 +187,12 @@ function Messages({ handleCardClick }) {
 
   const handleContextMenu = (event, chat) => {
     event.preventDefault();
+    setSelectedChatId(chat.chat._id);
     setContextMenuVisible(true);
     console.log('Context menu opened for chat:', chat);
     setContextMenuPosition({ x: event.clientX, y: event.clientY });
   };
-  
+
 
   const handleCloseContextMenu = () => {
     setContextMenuVisible(false);
@@ -253,18 +253,18 @@ function Messages({ handleCardClick }) {
               )}
               <div className="messages-list__list-item__indicator"></div>
             </div>
-            
+
           ))}
           {contextMenuVisible && (
-        <div className="context-menu" style={{ left: contextMenuPosition.x, top: contextMenuPosition.y }}>
-          <div className="context-menu-item" onClick={handleDeleteChat}>
-            Удалить чат
-          </div>
-          <div className="context-menu-item" onClick={handleClearChat}>
-            Очистить чат
-          </div>
-        </div>
-      )}
+            <div className="context-menu" style={{ left: contextMenuPosition.x, top: contextMenuPosition.y }}>
+              <div className="context-menu-item" onClick={handleDeleteChat}>
+                Удалить чат
+              </div>
+              <div className="context-menu-item" onClick={handleClearChat}>
+                Очистить чат
+              </div>
+            </div>
+          )}
         </div>
       </div>
       {selectedChatId && (
@@ -325,7 +325,7 @@ function Messages({ handleCardClick }) {
           </div>
         </div>
       )}
-      
+
     </section>
   );
 }

@@ -9,13 +9,16 @@ function Search({
   cards,  
   onCardLike,
   onCardDelete,
+  isDemoUserVisible,
+  setDemoUserVisible,
+  selectedChatId,
+  setSelectedChatId,
 }) {
 
   const [inputValue, setInputValue] = useState(''); 
   const [allUsers, setAllUsers] = useState([]);
   const [foundUsers, setFoundUsers] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [isDemoUserVisible, setDemoUserVisible] = useState(false);
   const [demoUser, setDemoUser] = useState([]);
 
   useEffect(() => {
@@ -41,7 +44,6 @@ function Search({
   
     // Устанавливаем отфильтрованных пользователей в состояние
     setFoundUsers(filteredUsers);
-  console.log(filteredUsers)
     // Показываем выпадающее меню, если найдены пользователи
     setShowDropdown(filteredUsers.length > 0);
   };
@@ -104,7 +106,7 @@ function Search({
         ))}
       </section>
     </div>}
-    {isDemoUserVisible && <DemoUser onCardDelete={onCardDelete} onCardLike={onCardLike} onCardClick={onCardClick} setDemoUserVisible={setDemoUserVisible} user={demoUser} cards={cards} setCards={setCards}/>}
+    {isDemoUserVisible && <DemoUser selectedChatId={selectedChatId} setSelectedChatId={setSelectedChatId} onCardDelete={onCardDelete} onCardLike={onCardLike} onCardClick={onCardClick} setDemoUserVisible={setDemoUserVisible} user={demoUser} cards={cards} setCards={setCards}/>}
     </>
   );
 }

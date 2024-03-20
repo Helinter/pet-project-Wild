@@ -31,6 +31,8 @@ function App() {
 
   const [cards, setCards] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
+  const [isDemoUserVisible, setDemoUserVisible] = useState(false);
+  const [selectedChatId, setSelectedChatId] = useState(null);
 
   useEffect(() => {
     api.checkToken()
@@ -154,15 +156,15 @@ function App() {
 
   return (
     <section className="App">
-      {isLogedin ? <Bar /> : null}
+      {isLogedin ? <Bar isDemoUserVisible={isDemoUserVisible} setDemoUserVisible={setDemoUserVisible}/> : null}
       <Routes>
         <Route path="/signin" element={isLogedin ? <Navigate to="/" /> : <Login setIsLogedin={setIsLogedin} />} />
         <Route path="/signup" element={isLogedin ? <Navigate to="/" /> : <Register setIsLogedin={setIsLogedin} />} />
         <Route path="/" element={isLogedin ? <Main /> : <Login setIsLogedin={setIsLogedin} />} >
           <Route path="/home" element={<Home />} />
-          <Route path="/search" element={<Search cards={cards} setCards={setCards} onCardClick={handleCardClick} onCardLike={handleLikeClick} onCardDelete={handleDeleteClick} />} />
+          <Route path="/search" element={<Search selectedChatId={selectedChatId} setSelectedChatId={setSelectedChatId} isDemoUserVisible={isDemoUserVisible} setDemoUserVisible={setDemoUserVisible} cards={cards} setCards={setCards} onCardClick={handleCardClick} onCardLike={handleLikeClick} onCardDelete={handleDeleteClick} />} />
           <Route path="/friends" element={<Friends />} />
-          <Route path="/messages" element={<Messages handleCardClick={handleCardClick}/>} />
+          <Route path="/messages" element={<Messages selectedChatId={selectedChatId} setSelectedChatId={setSelectedChatId} handleCardClick={handleCardClick}/>} />
           <Route path="/profile" element={<Profile handleCardClick={handleCardClick} cards={cards} setCards={setCards} handleLikeClick={handleLikeClick} handleDeleteClick={handleDeleteClick} handleAddCardClick={handleAddCardClick} updateCurrentUser={updateCurrentUser} currentUser={currentUser} handleLogout={handleLogout} handleEditAvatarClick={handleEditAvatarClick} handleEditProfileClick={handleEditProfileClick} />} />
         </Route>
       </Routes>

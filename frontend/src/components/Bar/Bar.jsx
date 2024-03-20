@@ -4,10 +4,9 @@ import Home from '../../images/Vector3Home.svg';
 import Search from '../../images/icons/Search.svg';
 import Message_Notification from '../../images/icons/Message_Notification.svg';
 import Profile from '../../images/icons/user-profile-circle.svg';
-import Friends from '../../images/icons/user-profile-circle.svg';
 import Logo from '../../images/logoza.png';
 
-const Bar = () => {
+const Bar = ({isDemoUserVisible, setDemoUserVisible}) => {
   const location = useLocation();
   const [selectedLink, setSelectedLink] = useState(location.pathname);
 
@@ -16,6 +15,10 @@ const Bar = () => {
   useEffect(() => {
     setSelectedLink(location.pathname);
   }, [location]);
+
+  const handleSearchClick = () =>{
+    setDemoUserVisible(false)
+  }
 
   return (
     <div className="bar">
@@ -30,7 +33,7 @@ const Bar = () => {
           </Link>
         </li>
         <li className="bar__nav-link-box">
-          <Link to="/search" className={`bar__nav-link ${selectedLink === '/search' ? 'bar__nav-link-selected' : ''}`}>
+          <Link to="/search" className={`bar__nav-link ${selectedLink === '/search' ? 'bar__nav-link-selected' : ''}`}onClick={handleSearchClick}>
             <img className="bar__nav-link-icon" src={Search} alt="Поиск" />
             Поиск
           </Link>

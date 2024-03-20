@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { setToken } from '../TokenHelper/TokenHelper';
 import { useCurrentUser } from '../../context/CurrentUserContext';
 
-function Register({ setIsRegistered, setImageSrc, setError, setIsLogedin }) {
+function Register({ setIsLogedin }) {
   const {
     values,
     handleChange,
@@ -15,7 +15,7 @@ function Register({ setIsRegistered, setImageSrc, setError, setIsLogedin }) {
     validatePassword,
     errors,
   } = useFormWithValidation();
-  const [hasErrors, setHasErrors] = useState(true); // Инициализируем как true
+  const [hasErrors, setHasErrors] = useState(true);
   const { updateCurrentUser } = useCurrentUser();
   const navigate = useNavigate();
 
@@ -39,7 +39,6 @@ function Register({ setIsRegistered, setImageSrc, setError, setIsLogedin }) {
           values.password
         );
         console.log('Успешная регистрация:', response);
-        setIsRegistered(true);
     
         const res = await api.login(values.email, values.password);
         if (res.token) {
