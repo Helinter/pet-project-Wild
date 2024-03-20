@@ -11,5 +11,7 @@ router.post('/cards', authMiddleware, validateCardData, cardController.createCar
 router.delete('/cards/:cardId', authMiddleware, validateCardId, cardController.deleteCard);
 router.put('/cards/:cardId/likes', authMiddleware, validateCardId, cardController.likeCard);
 router.delete('/cards/:cardId/likes', authMiddleware, validateCardId, cardController.dislikeCard);
+router.get('/cards/:cardId/comments', authMiddleware, validateCardId, cardController.getCardComments);
+router.post('/cards/:cardId/comments', authMiddleware, validateCardId, cardController.addCommentToCard);
 
 module.exports = router;

@@ -72,3 +72,31 @@ exports.dislikeCard = async (req, res, next) => {
     next(error); // Передаем ошибку централизованному обработчику ошибок
   }
 };
+
+exports.getCardComments = async (req, res, next) => {
+  try {
+    const card = await Card.findById(req.params.cardId);
+    if (!card) {
+      throw new NotFoundError('Карточка не найдена');
+    }
+    const comments = card.comments; // Получаем комментарии из объекта карточки
+    res.status(200).json(comments);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.addCommentToCard = async (req, res, next) => {
+  const { text } = req.body;
+  try {
+    const card = await Card.findById(req.params.cardId);
+    if (!card) {
+      throw new NotFoundError('Карточка не найдена');
+    }
+    card.comments.push({ text: text, userId: req.user._id });
+    await card.save();
+    res.status(201).json(card.comments);
+  } catch (error) {
+    next(error);
+  }
+};

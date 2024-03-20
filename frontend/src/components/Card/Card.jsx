@@ -4,7 +4,7 @@ import { useCurrentUser } from '../../context/CurrentUserContext';
 import { api } from '../../utils/MainApi';
 
 function Card({ card, handleClick, handleLikeClick, handleDeleteClick }) {
-  const { currentUser, updateCurrentUser } = useCurrentUser();
+  const { currentUser } = useCurrentUser();
   const location = useLocation();
   const [ownerName, setOwnerName] = useState('');
 
@@ -36,6 +36,11 @@ function Card({ card, handleClick, handleLikeClick, handleDeleteClick }) {
       {shouldDisplayUsername && <p className="element__username">{ownerName}</p>}
       <img className="element__image" src={card.link} alt={card.name} onClick={() => handleClick(card)} />
       <h2 className="element__title">{card.name}</h2>
+      <button
+          type="button"
+          className="element__comment-button"
+          onClick={() => handleClick(card)}
+        ></button>
       <div className="element__likes">
         <button
           type="button"

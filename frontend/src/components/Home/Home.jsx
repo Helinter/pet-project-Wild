@@ -1,29 +1,33 @@
-function Home() {
+import React, { useEffect } from 'react';
+import Card from '../Card/Card';
+import { api } from '../../utils/MainApi';
+
+function Home({
+  setCards,
+  onCardClick,
+  cards,
+  onCardLike,
+  onCardDelete,
+}) {
+
+  useEffect(() => {
+    api.getCards()
+      .then((cardsData) => {
+        setCards(cardsData);
+      })
+      .catch((error) => {
+        console.error('Ошибка при загрузке карточек:', error);
+      });
+  }, []);
 
   return (
 
     <section className="home">
-      <p className="home-readme">Социальная сеть "Wild"<br />
-      <br />
-
-FullStack проект Wild, в котором люди смогут обмениваться контентом, общаться в личных чатах и тредах под постами, искать фото, видео и другой контент, подписываться на обновления друг друга и так далее.<br />
-<br />
-
-Проект в разработке.<br />
-<br />
-
-Реализованный функционал:<br />
-<br />
-
-- регистрация и авторизация на React.<br />
-<br /> - страница профиля: редактирование данных пользователя (имя, инфо, возраст, аватар, юзернейм, почта), добавление фотографий, кнопка логаута.<br />
-<br /> - страница мессенджера: поиск пользователей по юзернейму, создание чатов, обмен сообщениями в реальном времени с помощью socket.io.<br />
-<br /> - страница поиска: лента фотографий всех пользователей.<br />
-<br /> - пользователи могут ставить лайки фотографиям друг-друга. пользователь может удалять свои фотографии.<br />
-<br /> - просмотр фоторгафий через попап при клике по фотографии, селектор фотографий в попапе.<br />
-<br />
-Tехнологии: JavaScript, React.js, Node.js, Express.js, MongoDB, HTML5, CSS</p>
-     
+      <section className="elements">
+        {cards.slice().reverse().map((card) => (
+          <Card key={card._id} card={card} handleClick={onCardClick} handleLikeClick={onCardLike} handleDeleteClick={onCardDelete} />
+        ))}
+      </section>
     </section>
 
   );

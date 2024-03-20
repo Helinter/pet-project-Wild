@@ -1,10 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import PopupWithForm from './PopupWithForm';
 
-export default function AddCardPopup({ isOpen, closeAllPopups, handleAddCard }) {
+export default function AddCardPopup({ onClose, isOpen, handleAddCard }) {
   const [placeName, setPlaceName] = useState('');
   const [placeLink, setPlaceLink] = useState('');
 
+  useEffect(() => {
+    document.body.classList.toggle('popup-opened', isOpen); // Добавляем или убираем класс в зависимости от состояния isOpen
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.body.classList.remove('popup-opened'); // Убираем класс при размонтировании компонента
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen]);
+
+  const handleEscape = (event) => {
+    if (event.key === 'Escape' && isOpen) {
+      onClose();
+    }
+  };
 
   useEffect(() => {
     if (!isOpen) {
@@ -23,7 +37,7 @@ export default function AddCardPopup({ isOpen, closeAllPopups, handleAddCard }) 
       title="Загрузить тюленя"
       name="placeForm"
       isOpen={isOpen}
-      onClose={closeAllPopups}
+      onClose={onClose}
       onSubmit={handleSubmit}
       buttonText="Загрузить"
     >

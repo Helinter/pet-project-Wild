@@ -337,6 +337,35 @@ async deleteChat(chatId) {
   }
 }
 
+async getCardComments(cardId) {
+  try {
+    const res = await fetch(`${this.url}/cards/${cardId}/comments`, {
+      method: 'GET',
+      headers: this._updateHeaders(),
+    });
+
+    return this._checkResponse(res);
+  } catch (error) {
+    console.error('Error fetching card comments:', error);
+    return Promise.reject(`Error fetching card comments: ${error.message}`);
+  }
+}
+
+async addCommentToCard(cardId, commentText) {
+  try {
+    const res = await fetch(`${this.url}/cards/${cardId}/comments`, {
+      method: 'POST',
+      headers: this._updateHeaders(),
+      body: JSON.stringify( commentText ),
+    });
+
+    return this._checkResponse(res);
+  } catch (error) {
+    console.error('Error adding comment to card:', error);
+    return Promise.reject(`Error adding comment to card: ${error.message}`);
+  }
+}
+
 
 }
 

@@ -3,7 +3,7 @@ import Bar from '../Bar/Bar';
 import Login from '../Login/Login';
 import Register from '../Register/Register';
 import { useState, useEffect } from 'react';
-import { Routes, Route, Navigate, useNavigate, Outlet } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { api } from '../../utils/MainApi';
 import { useCurrentUser } from '../../context/CurrentUserContext';
 import Home from '../Home/Home';
@@ -161,17 +161,17 @@ function App() {
         <Route path="/signin" element={isLogedin ? <Navigate to="/" /> : <Login setIsLogedin={setIsLogedin} />} />
         <Route path="/signup" element={isLogedin ? <Navigate to="/" /> : <Register setIsLogedin={setIsLogedin} />} />
         <Route path="/" element={isLogedin ? <Main /> : <Login setIsLogedin={setIsLogedin} />} >
-          <Route path="/home" element={<Home />} />
-          <Route path="/search" element={<Search selectedChatId={selectedChatId} setSelectedChatId={setSelectedChatId} isDemoUserVisible={isDemoUserVisible} setDemoUserVisible={setDemoUserVisible} cards={cards} setCards={setCards} onCardClick={handleCardClick} onCardLike={handleLikeClick} onCardDelete={handleDeleteClick} />} />
+          <Route path="/home" element={<Home cards={cards} setCards={setCards} onCardClick={handleCardClick} onCardLike={handleLikeClick} onCardDelete={handleDeleteClick}/>} />
+          <Route path="/search" element={<Search cards={cards} setCards={setCards} onCardClick={handleCardClick} onCardLike={handleLikeClick} onCardDelete={handleDeleteClick} selectedChatId={selectedChatId} setSelectedChatId={setSelectedChatId} isDemoUserVisible={isDemoUserVisible} setDemoUserVisible={setDemoUserVisible} />} />
           <Route path="/friends" element={<Friends />} />
           <Route path="/messages" element={<Messages selectedChatId={selectedChatId} setSelectedChatId={setSelectedChatId} handleCardClick={handleCardClick}/>} />
           <Route path="/profile" element={<Profile handleCardClick={handleCardClick} cards={cards} setCards={setCards} handleLikeClick={handleLikeClick} handleDeleteClick={handleDeleteClick} handleAddCardClick={handleAddCardClick} updateCurrentUser={updateCurrentUser} currentUser={currentUser} handleLogout={handleLogout} handleEditAvatarClick={handleEditAvatarClick} handleEditProfileClick={handleEditProfileClick} />} />
         </Route>
       </Routes>
-      <EditProfilePopup closeAllPopups={closeAllPopups} isOpen={isEditProfilePopupOpen} handleUpdateUser={handleUpdateUser} />
-      <EditAvatarPopup closeAllPopups={closeAllPopups} isOpen={isEditAvatarPopupOpen} handleUpdateAvatar={handleUpdateAvatar} />
-      <AddCardPopup closeAllPopups={closeAllPopups} isOpen={isAddCardPopupOpen} handleAddCard={handleAddCard} />
-      <ImagePopup link={selectedCard?.link} name={selectedCard?.name} isOpen={isImagePopupOpen} onClose={closeAllPopups} cards={cards} setSelectedCard={setSelectedCard} />
+      <EditProfilePopup onClose={closeAllPopups} isOpen={isEditProfilePopupOpen} handleUpdateUser={handleUpdateUser} />
+      <EditAvatarPopup onClose={closeAllPopups} isOpen={isEditAvatarPopupOpen} handleUpdateAvatar={handleUpdateAvatar} />
+      <AddCardPopup onClose={closeAllPopups} isOpen={isAddCardPopupOpen} handleAddCard={handleAddCard} />
+      <ImagePopup link={selectedCard?.link} name={selectedCard?.name} isOpen={isImagePopupOpen} onClose={closeAllPopups} cards={cards} selectedCard={selectedCard} setSelectedCard={setSelectedCard} />
     </section>
   );
 }

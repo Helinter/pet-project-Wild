@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PopupWithForm from './PopupWithForm';
 import { useCurrentUser } from '../../context/CurrentUserContext';
 
-export default function EditProfilePopup({ closeAllPopups, isOpen, handleUpdateUser }) {
+export default function EditProfilePopup({ onClose, isOpen, handleUpdateUser }) {
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -12,6 +12,21 @@ export default function EditProfilePopup({ closeAllPopups, isOpen, handleUpdateU
 
   const { currentUser, updateCurrentUser } = useCurrentUser();
 
+  useEffect(() => {
+    document.body.classList.toggle('popup-opened', isOpen); // Добавляем или убираем класс в зависимости от состояния isOpen
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.body.classList.remove('popup-opened'); // Убираем класс при размонтировании компонента
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen]);
+
+  const handleEscape = (event) => {
+    if (event.key === 'Escape' && isOpen) {
+      onClose();
+    }
+  };
+  
   useEffect(() => {
     // Проверяем, что currentUser определен
     if (currentUser && currentUser.name !== undefined) {
@@ -50,7 +65,7 @@ export default function EditProfilePopup({ closeAllPopups, isOpen, handleUpdateU
 
   return (
     <PopupWithForm
-      onClose={closeAllPopups}
+      onClose={onClose}
       title="Редактировать профиль"
       name="profileForm"
       isOpen={isOpen}

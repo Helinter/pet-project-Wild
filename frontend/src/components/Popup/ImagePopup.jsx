@@ -1,8 +1,12 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { api } from '../../utils/MainApi';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-function ImagePopup({ link, name, isOpen, onClose, cards, setSelectedCard }) {
+function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelectedCard }) {
+  const navigate = useNavigate();
   const location = useLocation();
+  const [commentInput, setCommentInput] = useState('');
+  const [comments, setComments] = useState([]);
 
   const handlePreviousCard = () => {
     const currentIndex = cards.findIndex(card => card.link === link);
@@ -16,6 +20,60 @@ function ImagePopup({ link, name, isOpen, onClose, cards, setSelectedCard }) {
     setSelectedCard(cards[nextIndex]);
   };
 
+  const handleEscape = (event) => {
+    if (event.key === 'Escape' && isOpen) {
+      onClose();
+    }
+  };
+
+  useEffect(() => {
+    document.body.classList.toggle('popup-opened', isOpen);
+    document.addEventListener('keydown', handleEscape);
+    // Загрузка комментариев при открытии попапа
+    if (isOpen) {
+      
+      (async () => {
+        try {
+          const commentsData = await api.getCardComments(selectedCard._id);
+          // Получаем информацию о пользователе для каждого комментария
+          const commentsWithUserInfo = await Promise.all(commentsData.map(async (comment) => {
+            const user = await api.getUserById(comment.userId);
+            return {
+              ...comment,
+              user: {
+                username: user.username,
+                avatar: user.avatar,
+              },
+            };
+          }));
+          setComments(commentsWithUserInfo);
+        } catch (error) {
+          console.error('Ошибка при загрузке комментариев:', error);
+        }
+      })();
+    }
+    return () => {
+      document.body.classList.remove('popup-opened');
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen, selectedCard, comments]);
+
+  const handleCommentInputChange = (event) => {
+    setCommentInput(event.target.value);
+  };
+
+  const handleAddComment = async () => {
+    if (commentInput.trim() === '') return;
+    try {
+      const newComment = await api.addCommentToCard(selectedCard._id, { text: commentInput.trim() });
+      setComments(prevComments => [...prevComments, newComment]);
+      setCommentInput('');
+    } catch (error) {
+      console.error('Ошибка при добавлении комментария:', error);
+    }
+  };
+  
+
   return (
     <div className={`popup ${isOpen ? 'popup_opened' : ''}`}>
       <div className="popup__container popup__container_type_image">
@@ -25,7 +83,7 @@ function ImagePopup({ link, name, isOpen, onClose, cards, setSelectedCard }) {
           onClick={onClose}
         ></button>
 
-        {!location.pathname.includes('/messages') && (
+        {navigate && !location.pathname.includes('/messages') && (
           <>
             <button className="popup__container-selector-button popup__container-selector-button-left" onClick={handlePreviousCard}></button>
             <button className="popup__container-selector-button popup__container-selector-button-right" onClick={handleNextCard}></button>
@@ -34,6 +92,34 @@ function ImagePopup({ link, name, isOpen, onClose, cards, setSelectedCard }) {
 
         <img className="popup__img" src={link} alt={name} />
         <p className="popup__image-container-title">{name}</p>
+        
+        {navigate && !location.pathname.includes('/messages') && (
+          <div className="comment-section">
+            <input
+              type="text"
+              className="comment-input"
+              placeholder="Добавить комментарий"
+              value={commentInput}
+              onChange={handleCommentInputChange}
+            />
+            <button className="add-comment-button" onClick={handleAddComment}>Добавить</button>
+            <ul className="comment-list">
+            {comments.map((comment, index) => (
+                <li className="comment" key={index}>
+                  {comment.user && comment.user.avatar && (
+                    <img src={comment.user.avatar} alt={comment.user.username} className="comment-avatar" />
+                  )}
+                  <div className="comment-container">
+                    {comment.user && comment.user.username && (
+                      <p className="comment-username">{comment.user.username}</p>
+                    )}
+                    <p className="comment-text">{comment.text}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

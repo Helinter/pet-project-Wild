@@ -92,9 +92,7 @@
 }
 
 
-.demoUser__photos img {
-  
-}
+.demoUser__photos img {}
 
 .demoUser__container-avatar-button {
   background: none;
@@ -106,27 +104,43 @@
   text-decoration: none;
   cursor: pointer;
   border: none;
-border-radius: 50%;
+  border-radius: 50%;
 }
 
-.back-button{
+.back-button {
+  padding: 0;
+  margin: 0;
+  border: none;
   background: none;
-    outline: none;
-    color: bisque;
-    width: 150px;
-    position: absolute;
-    top: 45px;
-    right: 190px;
-    border-radius: 30px;
-}
-
-.chat-button{
-  background: none;
-    outline: none;
-    color: bisque;
-    width: 150px;
-    position: absolute;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+  background-color: #3B393C;
+  width: 139px;
+  height: 31px;
+  border-radius: 10px;
+  color: #bfb0a3;
+  margin-left: 43px;
+  position: absolute;
     top: 85px;
-    right: 190px;
-    border-radius: 30px;
+    right: 440px;
+}
+
+.chat-button {
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+  background-color: #3B393C;
+  width: 139px;
+  height: 31px;
+  border-radius: 10px;
+  color: #bfb0a3;
+  margin-left: 43px;
+  position: absolute;
+    top: 85px;
+    right: 290px;
 }

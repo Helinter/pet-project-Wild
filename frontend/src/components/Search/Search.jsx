@@ -1,18 +1,17 @@
 import React, {  useState, useEffect } from 'react';
-import Card from '../Card/Card';
 import { api } from '../../utils/MainApi';
 import DemoUser from '../DemoUser/DemoUser';
 
 function Search({
-  setCards,
-  onCardClick,
-  cards,  
-  onCardLike,
-  onCardDelete,
   isDemoUserVisible,
   setDemoUserVisible,
   selectedChatId,
   setSelectedChatId,
+  setCards,
+  onCardClick,
+  cards,
+  onCardLike,
+  onCardDelete,
 }) {
 
   const [inputValue, setInputValue] = useState(''); 
@@ -47,18 +46,6 @@ function Search({
     // Показываем выпадающее меню, если найдены пользователи
     setShowDropdown(filteredUsers.length > 0);
   };
-  
-
-
-  useEffect(() => {
-    api.getCards()
-      .then((cardsData) => {
-        setCards(cardsData);
-      })
-      .catch((error) => {
-        console.error('Ошибка при загрузке карточек:', error);
-      });
-  }, [isDemoUserVisible]);
 
   const handleButtonClick = (user) => {
     setDemoUserVisible(true);
@@ -77,7 +64,7 @@ function Search({
             maxLength="30"
             type="text"
             name="searchForm"
-            placeholder="@username"
+            placeholder="username или Имя"
             onChange={handleInputChange}
             autoComplete="off"
           />
@@ -99,12 +86,6 @@ function Search({
           </ul>
       )}
     </section>
-
-      <section  className="elements">
-        {cards.slice().reverse().map((card) => (
-          <Card key={card._id} card={card} handleClick={onCardClick}  handleLikeClick ={onCardLike} handleDeleteClick={onCardDelete}/>  
-        ))}
-      </section>
     </div>}
     {isDemoUserVisible && <DemoUser selectedChatId={selectedChatId} setSelectedChatId={setSelectedChatId} onCardDelete={onCardDelete} onCardLike={onCardLike} onCardClick={onCardClick} setDemoUserVisible={setDemoUserVisible} user={demoUser} cards={cards} setCards={setCards}/>}
     </>

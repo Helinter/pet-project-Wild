@@ -1,7 +1,7 @@
-import React, {  useRef } from 'react';
+import React, {  useRef, useEffect } from 'react';
 import PopupWithForm from './PopupWithForm';
 
-export default function EditAvatarPopup({ isOpen, closeAllPopups, handleUpdateAvatar }) {
+export default function EditAvatarPopup({ onClose, isOpen, handleUpdateAvatar }) {
   const avatarInputRef = useRef();
 
   
@@ -11,7 +11,21 @@ export default function EditAvatarPopup({ isOpen, closeAllPopups, handleUpdateAv
     handleUpdateAvatar( newAvatar
     );
   } 
-  
+
+  useEffect(() => {
+    document.body.classList.toggle('popup-opened', isOpen); // Добавляем или убираем класс в зависимости от состояния isOpen
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.body.classList.remove('popup-opened'); // Убираем класс при размонтировании компонента
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen]);
+
+  const handleEscape = (event) => {
+    if (event.key === 'Escape' && isOpen) {
+      onClose();
+    }
+  };
   
 
   return (
@@ -19,7 +33,7 @@ export default function EditAvatarPopup({ isOpen, closeAllPopups, handleUpdateAv
       title="Обновить аватар"
       name="avatarForm"
       isOpen={isOpen}
-      onClose={closeAllPopups}
+      onClose={onClose}
       onSubmit={handleSubmit}
       buttonText="Сохранить"
     >

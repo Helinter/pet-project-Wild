@@ -1,7 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 function PopupWithForm({ title, name, isOpen, onClose, children, onSubmit, buttonText }) {
   const popupClassName = `popup popup_type_${name} ${isOpen ? 'popup_opened' : ''}`;
+
+  useEffect(() => {
+    document.body.classList.toggle('popup-opened', isOpen); // Добавляем или убираем класс в зависимости от состояния isOpen
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.body.classList.remove('popup-opened'); // Убираем класс при размонтировании компонента
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, [isOpen]);
+
+  const handleEscape = (event) => {
+    if (event.key === 'Escape' && isOpen) {
+      onClose();
+    }
+  };
 
   return (
     <div className={popupClassName}>
