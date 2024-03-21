@@ -72,6 +72,12 @@ function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelec
       console.error('Ошибка при добавлении комментария:', error);
     }
   };
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleAddComment();
+    }
+  };
   
 
   return (
@@ -95,14 +101,17 @@ function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelec
         
         {navigate && !location.pathname.includes('/messages') && (
           <div className="comment-section">
+            <div className="comment-input-container">
             <input
               type="text"
               className="comment-input"
               placeholder="Добавить комментарий"
               value={commentInput}
               onChange={handleCommentInputChange}
+              onKeyPress={handleKeyPress}
             />
             <button className="add-comment-button" onClick={handleAddComment}>Добавить</button>
+            </div>
             <ul className="comment-list">
             {comments.map((comment, index) => (
                 <li className="comment" key={index}>

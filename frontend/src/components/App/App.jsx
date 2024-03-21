@@ -89,7 +89,7 @@ function App() {
       console.error('Ошибка при обновлении данных пользователя:', error);
     }
   };
-  
+
 
   const handleAddCard = async (name, link) => {
     try {
@@ -156,22 +156,83 @@ function App() {
 
   return (
     <section className="App">
-      {isLogedin ? <Bar isDemoUserVisible={isDemoUserVisible} setDemoUserVisible={setDemoUserVisible}/> : null}
+      {isLogedin ? <Bar
+        isDemoUserVisible={isDemoUserVisible}
+        setDemoUserVisible={setDemoUserVisible}
+      /> : null}
       <Routes>
-        <Route path="/signin" element={isLogedin ? <Navigate to="/" /> : <Login setIsLogedin={setIsLogedin} />} />
-        <Route path="/signup" element={isLogedin ? <Navigate to="/" /> : <Register setIsLogedin={setIsLogedin} />} />
-        <Route path="/" element={isLogedin ? <Main /> : <Login setIsLogedin={setIsLogedin} />} >
-          <Route path="/home" element={<Home cards={cards} setCards={setCards} onCardClick={handleCardClick} onCardLike={handleLikeClick} onCardDelete={handleDeleteClick}/>} />
-          <Route path="/search" element={<Search cards={cards} setCards={setCards} onCardClick={handleCardClick} onCardLike={handleLikeClick} onCardDelete={handleDeleteClick} selectedChatId={selectedChatId} setSelectedChatId={setSelectedChatId} isDemoUserVisible={isDemoUserVisible} setDemoUserVisible={setDemoUserVisible} />} />
+        <Route path="/signin" element={isLogedin ? <Navigate to="/" /> : <Login
+          setIsLogedin={setIsLogedin}
+        />} />
+        <Route path="/signup" element={isLogedin ? <Navigate to="/" /> : <Register
+          setIsLogedin={setIsLogedin}
+        />} />
+        <Route path="/" element={isLogedin ? <Main /> : <Login
+          setIsLogedin={setIsLogedin}
+        />} >
+          <Route path="/home" element={<Home
+            cards={cards}
+            setCards={setCards}
+            onCardClick={handleCardClick}
+            onCardLike={handleLikeClick}
+            onCardDelete={handleDeleteClick}
+          />} />
+          <Route path="/search" element={<Search
+            cards={cards}
+            setCards={setCards}
+            onCardClick={handleCardClick}
+            onCardLike={handleLikeClick}
+            onCardDelete={handleDeleteClick}
+            selectedChatId={selectedChatId}
+            setSelectedChatId={setSelectedChatId}
+            isDemoUserVisible={isDemoUserVisible}
+            setDemoUserVisible={setDemoUserVisible}
+          />} />
           <Route path="/friends" element={<Friends />} />
-          <Route path="/messages" element={<Messages selectedChatId={selectedChatId} setSelectedChatId={setSelectedChatId} handleCardClick={handleCardClick}/>} />
-          <Route path="/profile" element={<Profile handleCardClick={handleCardClick} cards={cards} setCards={setCards} handleLikeClick={handleLikeClick} handleDeleteClick={handleDeleteClick} handleAddCardClick={handleAddCardClick} updateCurrentUser={updateCurrentUser} currentUser={currentUser} handleLogout={handleLogout} handleEditAvatarClick={handleEditAvatarClick} handleEditProfileClick={handleEditProfileClick} />} />
+          <Route path="/messages" element={<Messages
+            selectedChatId={selectedChatId}
+            setSelectedChatId={setSelectedChatId}
+            handleCardClick={handleCardClick}
+          />} />
+          <Route path="/profile" element={<Profile
+            handleCardClick={handleCardClick}
+            cards={cards}
+            setCards={setCards}
+            handleLikeClick={handleLikeClick}
+            handleDeleteClick={handleDeleteClick}
+            handleAddCardClick={handleAddCardClick}
+            updateCurrentUser={updateCurrentUser}
+            currentUser={currentUser}
+            handleLogout={handleLogout}
+            handleEditAvatarClick={handleEditAvatarClick}
+            handleEditProfileClick={handleEditProfileClick}
+          />} />
         </Route>
       </Routes>
-      <EditProfilePopup onClose={closeAllPopups} isOpen={isEditProfilePopupOpen} handleUpdateUser={handleUpdateUser} />
-      <EditAvatarPopup onClose={closeAllPopups} isOpen={isEditAvatarPopupOpen} handleUpdateAvatar={handleUpdateAvatar} />
-      <AddCardPopup onClose={closeAllPopups} isOpen={isAddCardPopupOpen} handleAddCard={handleAddCard} />
-      <ImagePopup link={selectedCard?.link} name={selectedCard?.name} isOpen={isImagePopupOpen} onClose={closeAllPopups} cards={cards} selectedCard={selectedCard} setSelectedCard={setSelectedCard} />
+      <EditProfilePopup
+        onClose={closeAllPopups}
+        isOpen={isEditProfilePopupOpen}
+        handleUpdateUser={handleUpdateUser}
+      />
+      <EditAvatarPopup
+        onClose={closeAllPopups}
+        isOpen={isEditAvatarPopupOpen}
+        handleUpdateAvatar={handleUpdateAvatar}
+      />
+      <AddCardPopup
+        onClose={closeAllPopups}
+        isOpen={isAddCardPopupOpen}
+        handleAddCard={handleAddCard}
+      />
+      <ImagePopup
+        link={selectedCard?.link}
+        name={selectedCard?.name}
+        isOpen={isImagePopupOpen}
+        onClose={closeAllPopups}
+        cards={cards}
+        selectedCard={selectedCard}
+        setSelectedCard={setSelectedCard}
+      />
     </section>
   );
 }

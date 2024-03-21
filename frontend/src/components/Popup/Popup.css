@@ -196,7 +196,7 @@ body.popup-opened {
 
 .popup__container_type_image {
   max-width: 75vw;
-  max-height: 75vh;
+  max-height: 85vh;
   align-self: center;
   display: flex;
   flex-direction: column;
@@ -206,6 +206,8 @@ body.popup-opened {
   box-shadow: none;
   border-radius: 0;
   width: auto;
+  overflow-y: auto;
+  margin-top: 57px;
 }
 
 .popup__container-selector-button {
@@ -235,8 +237,20 @@ body.popup-opened {
   background-image: url(../../images/Vector.svg);
 }
 
-.comment-list {
+.comment-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: bisque;
+  width: 382px;
+  align-self: center;
+  border-radius: 30px;
+  padding: 10px;
+}
 
+.comment-list {
+margin: 0;
+padding: 0;
 }
 
 .comment {
@@ -246,7 +260,7 @@ body.popup-opened {
   padding: 0;
   background-color: #434343;
   border-radius: 23px;
-  max-width: 250px;
+  width: 350px;
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 15px;
@@ -255,6 +269,24 @@ body.popup-opened {
   margin-bottom: 5px;
   margin-top: 5px;
   display: flex;
+}
+
+.comment-input {
+  outline: none;
+  box-shadow: none;
+  border-radius: 30px;
+  width: 350px;
+  padding: 10px 10px;
+  background-color: bisque;
+}
+
+.add-comment-button {
+  background: none;
+  outline: none;
+  border-radius: 50px;
+  position: absolute;
+  right: 7px;
+  bottom: 9px;
 }
 
 .comment-avatar{
@@ -278,4 +310,9 @@ padding: 0;
 .comment-text{
   margin: 0;
   padding: 0;
+}
+
+.comment-input-container{
+  display: flex;
+  position: relative;
 }
