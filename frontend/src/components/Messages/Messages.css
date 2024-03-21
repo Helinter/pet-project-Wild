@@ -240,3 +240,8 @@ width: 100%;
 .context-menu-item:hover {
   color: white;
 }
+
+.message{
+  padding: 0;
+  margin: 0;
+}

@@ -2,13 +2,19 @@ const winston = require('winston');
 const expressWinston = require('express-winston');
 const fs = require('fs');
 
-// Создайте папку для хранения логов, если ее нет
+// Создание папки для хранения логов, если ее нет
 const logsFolder = 'logs';
 if (!fs.existsSync(logsFolder)) {
   fs.mkdirSync(logsFolder);
 }
 
-// Создайте логгер для запросов
+// Функция для определения, нужно ли логировать данный запрос
+function shouldLog(req) {
+  // Если запрос идет на /cards/:cardId/comments или /users/:userId, не логируем его
+  return !req.url.match(/\/cards\/[a-zA-Z0-9]+\/comments/) && !req.url.match(/\/users\/[a-zA-Z0-9]+$/);
+}
+
+// Логгер для запросов
 const requestLogger = expressWinston.logger({
   transports: [
     new winston.transports.File({
@@ -23,12 +29,13 @@ const requestLogger = expressWinston.logger({
   msg: 'HTTP {{req.method}} {{req.url}}',
   expressFormat: true,
   colorize: false,
-  ignoreRoute() {
-    return false;
+  ignoreRoute(req) {
+    // Игнорируем логирование для определенных запросов
+    return !shouldLog(req);
   },
 });
 
-// Создайте логгер для ошибок
+// Логгер для ошибок
 const errorLogger = expressWinston.errorLogger({
   transports: [
     new winston.transports.File({

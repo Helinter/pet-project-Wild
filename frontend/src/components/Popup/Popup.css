@@ -102,7 +102,7 @@ body.popup-opened {
   position: fixed;
   align-self: flex-end;
   top: 5%;
-  right: 25%;
+  right: 30%;
   background-image: url(../../images/Close_Icon.svg);
   background-position: center;
   background-size: contain;

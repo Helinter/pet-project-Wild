@@ -123,7 +123,7 @@
   margin-left: 43px;
   position: absolute;
     top: 85px;
-    right: 440px;
+    right: 140px;
 }
 
 .chat-button {
@@ -143,4 +143,42 @@
   position: absolute;
     top: 85px;
     right: 290px;
+}
+
+.subscribe-button{
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+  background-color: #8f3636;
+  width: 139px;
+  height: 31px;
+  border-radius: 10px;
+  color: #bfb0a3;
+  margin-left: 43px;
+  position: absolute;
+    top: 85px;
+    right: 440px;
+}
+
+.unsubscribe-button{
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  outline: none;
+  background-color: #3B393C;
+  width: 139px;
+  height: 31px;
+  border-radius: 10px;
+  color: #bfb0a3;
+  margin-left: 43px;
+  position: absolute;
+    top: 85px;
+    right: 440px;
 }

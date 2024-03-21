@@ -3,7 +3,7 @@ import Bar from '../Bar/Bar';
 import Login from '../Login/Login';
 import Register from '../Register/Register';
 import { useState, useEffect } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { api } from '../../utils/MainApi';
 import { useCurrentUser } from '../../context/CurrentUserContext';
 import Home from '../Home/Home';
@@ -33,9 +33,16 @@ function App() {
   const [selectedCard, setSelectedCard] = useState(null);
   const [isDemoUserVisible, setDemoUserVisible] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState(null);
+  
+  const location = useLocation();
+  
+  if (location.pathname === '/') {
+    navigate('/home', { replace: true });
+  }
 
   useEffect(() => {
     api.checkToken()
+    
       .catch(error => {
         console.error('Ошибка проверки токена:', error);
         handleLogout();
@@ -161,10 +168,10 @@ function App() {
         setDemoUserVisible={setDemoUserVisible}
       /> : null}
       <Routes>
-        <Route path="/signin" element={isLogedin ? <Navigate to="/" /> : <Login
+        <Route path="/signin" element={isLogedin ? <Navigate to="/home" /> : <Login
           setIsLogedin={setIsLogedin}
         />} />
-        <Route path="/signup" element={isLogedin ? <Navigate to="/" /> : <Register
+        <Route path="/signup" element={isLogedin ? <Navigate to="/home" /> : <Register
           setIsLogedin={setIsLogedin}
         />} />
         <Route path="/" element={isLogedin ? <Main /> : <Login

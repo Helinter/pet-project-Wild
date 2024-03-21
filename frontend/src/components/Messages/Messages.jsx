@@ -28,13 +28,6 @@ function Messages({ handleCardClick, selectedChatId, setSelectedChatId }) {
     }
   }, []);
 
-
-  useEffect(() => {
-    console.log('Selected chat id:', selectedChatId);
-    // Другой код...
-  }, [selectedChatId]);
-
-
   // Сохраняем выбранный чат в localStorage при его изменении
   useEffect(() => {
     if (selectedChatId !== null) {
@@ -57,7 +50,6 @@ function Messages({ handleCardClick, selectedChatId, setSelectedChatId }) {
 
   useEffect(() => {
     const handleNewMessage = (updatedChat) => {
-      console.log('получено сообщение:', updatedChat);
       setChats(prevChats => {
         return prevChats.map(chat => {
           if (chat.chat && chat.chat._id === updatedChat.chat._id) {
@@ -164,7 +156,6 @@ function Messages({ handleCardClick, selectedChatId, setSelectedChatId }) {
       formData.append('image', selectedImage);
       const response = await api.uploadImage(formData);
       const imageUrl = response.imageUrl.replace(/\\/g, '/');
-      console.log(imageUrl);
       return imageUrl;
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -189,7 +180,6 @@ function Messages({ handleCardClick, selectedChatId, setSelectedChatId }) {
     event.preventDefault();
     setSelectedChatId(chat.chat._id);
     setContextMenuVisible(true);
-    console.log('Context menu opened for chat:', chat);
     setContextMenuPosition({ x: event.clientX, y: event.clientY });
   };
 
@@ -199,7 +189,6 @@ function Messages({ handleCardClick, selectedChatId, setSelectedChatId }) {
   };
 
   const handleDeleteChat = () => {
-    console.log('Удалить чат');
     api.deleteChat(selectedChatId);
     setChats(prevChats => prevChats.filter(chat => chat.chat._id !== selectedChatId));
     setSelectedChatId(null);
@@ -207,7 +196,6 @@ function Messages({ handleCardClick, selectedChatId, setSelectedChatId }) {
   };
 
   const handleClearChat = () => {
-    console.log('Очистить чат');
     api.clearChat(selectedChatId);
     setChats(prevChats => prevChats.map(chat => chat.chat._id === selectedChatId ? { ...chat, chat: { ...chat.chat, messages: [] } } : chat));
     handleCloseContextMenu();
@@ -291,7 +279,7 @@ function Messages({ handleCardClick, selectedChatId, setSelectedChatId }) {
                     />
                   )}
                   {message.content.text && (
-                    <p>{message.content.text}</p>
+                    <p className="message">{message.content.text}</p>
                   )}
                   <p className="messages-chat-chat-message-time">{getMessageTime(message.timestamp)}</p>
                 </div>

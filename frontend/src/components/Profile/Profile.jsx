@@ -21,6 +21,8 @@ function Profile({ handleCardClick, setCards, cards, handleDeleteClick, handleLi
     fetchCards();
   }, [currentUser]);
 
+console.log(currentUser)
+
   return (
 
     <section className="profile">
@@ -34,8 +36,8 @@ function Profile({ handleCardClick, setCards, cards, handleDeleteClick, handleLi
           </div>
           <div className="profile__container-subs-box">
             <p className="profile__container-subs-box-item">{cards.length} фото</p>
-            <p className="profile__container-subs-box-item">0 подписчиков</p>
-            <p className="profile__container-subs-box-item">0 подписок</p>
+            <p className="profile__container-subs-box-item">{currentUser?.subscribers.length} Подписчиков</p>
+            <p className="profile__container-subs-box-item">{currentUser?.subscriptions.length} Подписок</p>
           </div>
           <p className='profile__container-text'>{currentUser?.bio || 'Информация'}</p>
         </div>

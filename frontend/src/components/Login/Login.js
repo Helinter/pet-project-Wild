@@ -37,11 +37,9 @@ function Login({ setIsLogedin }) {
           const storedCurrentUser = localStorage.getItem('currentUser');
           const userData = await api.getUserInfo();
           if (userData) {
-            updateCurrentUser(userData);
-console.log('userData', userData);
+            updateCurrentUser(userData.user);
             if (!storedCurrentUser) {
-              console.log('storedCurrentUser', storedCurrentUser);
-              localStorage.setItem('currentUser', JSON.stringify(userData));
+              localStorage.setItem('currentUser', JSON.stringify(userData.user));
             }
           }
           navigate('/home');

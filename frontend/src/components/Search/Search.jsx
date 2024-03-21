@@ -29,18 +29,35 @@ function Search({
       .catch((error) => {
         console.error('Ошибка при загрузке пользователей:', error);
       });
+      
+    // Проверяем, есть ли сохраненные данные в localStorage
+    const storedDemoUser = localStorage.getItem('demoUser');
+    if (storedDemoUser) {
+      setDemoUser(JSON.parse(storedDemoUser));
+    }
+    
+    const storedIsDemoUserVisible = localStorage.getItem('isDemoUserVisible');
+    if (storedIsDemoUserVisible) {
+      setDemoUserVisible(JSON.parse(storedIsDemoUserVisible));
+    }
   }, []);
+
+  useEffect(() => {
+    // Сохраняем данные в localStorage при изменении demoUser или isDemoUserVisible
+    localStorage.setItem('demoUser', JSON.stringify(demoUser));
+    localStorage.setItem('isDemoUserVisible', JSON.stringify(isDemoUserVisible));
+  }, [demoUser, isDemoUserVisible]);
 
   const handleInputChange = (event) => {
     const value = event.target.value;
     setInputValue(value);
-  
+
     // Фильтруем список пользователей по введенному значению
     const filteredUsers = allUsers.filter((user) => {
       // Фильтруем по имени или юзернейму, в зависимости от вашей логики
       return user.name.toLowerCase().includes(value.toLowerCase()) || user.username.toLowerCase().includes(value.toLowerCase());
     });
-  
+
     // Устанавливаем отфильтрованных пользователей в состояние
     setFoundUsers(filteredUsers);
     // Показываем выпадающее меню, если найдены пользователи
@@ -87,7 +104,7 @@ function Search({
       )}
     </section>
     </div>}
-    {isDemoUserVisible && <DemoUser selectedChatId={selectedChatId} setSelectedChatId={setSelectedChatId} onCardDelete={onCardDelete} onCardLike={onCardLike} onCardClick={onCardClick} setDemoUserVisible={setDemoUserVisible} user={demoUser} cards={cards} setCards={setCards}/>}
+    {isDemoUserVisible && <DemoUser selectedChatId={selectedChatId} setSelectedChatId={setSelectedChatId} onCardDelete={onCardDelete} onCardLike={onCardLike} onCardClick={onCardClick} setDemoUserVisible={setDemoUserVisible} user={demoUser} setUser={setDemoUser} cards={cards} setCards={setCards}/>}
     </>
   );
 }

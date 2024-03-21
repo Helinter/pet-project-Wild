@@ -31,7 +31,7 @@ function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelec
     document.addEventListener('keydown', handleEscape);
     // Загрузка комментариев при открытии попапа
     if (isOpen) {
-      
+
       (async () => {
         try {
           const commentsData = await api.getCardComments(selectedCard._id);
@@ -56,7 +56,7 @@ function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelec
       document.body.classList.remove('popup-opened');
       document.removeEventListener('keydown', handleEscape);
     };
-  }, [isOpen, selectedCard, comments]);
+  }, [isOpen, selectedCard]);
 
   const handleCommentInputChange = (event) => {
     setCommentInput(event.target.value);
@@ -66,7 +66,17 @@ function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelec
     if (commentInput.trim() === '') return;
     try {
       const newComment = await api.addCommentToCard(selectedCard._id, { text: commentInput.trim() });
-      setComments(prevComments => [...prevComments, newComment]);
+      const commentsWithUserInfo = await Promise.all(newComment.map(async (comment) => {
+        const user = await api.getUserById(comment.userId);
+        return {
+          ...comment,
+          user: {
+            username: user.username,
+            avatar: user.avatar,
+          },
+        };
+      }));
+      setComments(commentsWithUserInfo);
       setCommentInput('');
     } catch (error) {
       console.error('Ошибка при добавлении комментария:', error);
@@ -78,7 +88,7 @@ function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelec
       handleAddComment();
     }
   };
-  
+
 
   return (
     <div className={`popup ${isOpen ? 'popup_opened' : ''}`}>
@@ -98,22 +108,22 @@ function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelec
 
         <img className="popup__img" src={link} alt={name} />
         <p className="popup__image-container-title">{name}</p>
-        
+
         {navigate && !location.pathname.includes('/messages') && (
           <div className="comment-section">
             <div className="comment-input-container">
-            <input
-              type="text"
-              className="comment-input"
-              placeholder="Добавить комментарий"
-              value={commentInput}
-              onChange={handleCommentInputChange}
-              onKeyPress={handleKeyPress}
-            />
-            <button className="add-comment-button" onClick={handleAddComment}>Добавить</button>
+              <input
+                type="text"
+                className="comment-input"
+                placeholder="Добавить комментарий"
+                value={commentInput}
+                onChange={handleCommentInputChange}
+                onKeyPress={handleKeyPress}
+              />
+              <button className="add-comment-button" onClick={handleAddComment}>Добавить</button>
             </div>
             <ul className="comment-list">
-            {comments.map((comment, index) => (
+              {comments.map((comment, index) => (
                 <li className="comment" key={index}>
                   {comment.user && comment.user.avatar && (
                     <img src={comment.user.avatar} alt={comment.user.username} className="comment-avatar" />

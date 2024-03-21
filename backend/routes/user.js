@@ -85,3 +85,6 @@ router.patch('/users/me/avatar', authMiddleware, async (req, res, next) => {
   }
 });
 module.exports = router;
+
+router.post('/users/:userId/subscribe', authMiddleware, userController.subscribeToUser);
+router.post('/users/:userId/unsubscribe', authMiddleware, userController.unsubscribeFromUser);

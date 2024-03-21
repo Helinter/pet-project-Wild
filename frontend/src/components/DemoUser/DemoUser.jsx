@@ -4,10 +4,18 @@ import { api } from '../../utils/MainApi';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCurrentUser } from '../../context/CurrentUserContext';
 
-function DemoUser({ onCardDelete, onCardClick, onCardLike, setDemoUserVisible, user, setCards, cards, selectedChatId, setSelectedChatId }) {
+function DemoUser({ onCardDelete, onCardClick, onCardLike, setDemoUserVisible, user, setUser, setCards, cards, selectedChatId, setSelectedChatId }) {
 
   const [chatExists, setChatExists] = useState(false);
-  const { currentUser } = useCurrentUser();
+  const { currentUser, updateCurrentUser } = useCurrentUser();
+  const [isSubscribed, setIsSubscribed] = useState(false);
+
+  useEffect(() => {
+    // Проверяем, есть ли идентификатор пользователя в подписках текущего пользователя
+    const isUserSubscribed = currentUser.subscriptions.includes(user._id);
+    // Устанавливаем соответствующее значение для isSubscribed
+    setIsSubscribed(isUserSubscribed);
+  }, [user, currentUser.subscriptions, setIsSubscribed]);
 
   useEffect(() => {
     // Получение карточек с сервера
@@ -27,8 +35,18 @@ function DemoUser({ onCardDelete, onCardClick, onCardLike, setDemoUserVisible, u
 
   const navigate = useNavigate();
 
+// Функция для обновления данных о пользователе
+const updateUser = async () => {
+  try {
+    const updatedUserData = await api.getUserById(user._id); // Получаем обновленные данные о пользователе с сервера
+    setUser(updatedUserData); // Обновляем состояние пользователя
+  } catch (error) {
+    console.error('Ошибка при обновлении данных о пользователе:', error);
+  }
+};
 
-  const handleBackClick = (user) => {
+
+  const handleBackClick = () => {
     setDemoUserVisible(false);
   };
 
@@ -61,6 +79,38 @@ function DemoUser({ onCardDelete, onCardClick, onCardLike, setDemoUserVisible, u
   };
 
 
+  const handleSubscriptionClick = async () => {
+    try {
+      if (isSubscribed) {
+        // Отписываемся от пользователя
+        await api.unsubscribeFromUser(user._id, currentUser._id);
+        setIsSubscribed(false);
+
+        const res = await api.getUserInfo();
+      localStorage.setItem('currentUser', JSON.stringify(res.user));
+      updateCurrentUser(res.user);
+
+        console.log('Отписка от пользователя успешно выполнена');
+        updateUser();
+        console.log('обновленный юзер', currentUser)
+      } else {
+        
+        // Подписываемся на пользователя
+        await api.subscribeToUser(user._id, currentUser._id);
+        setIsSubscribed(true);
+
+        const res = await api.getUserInfo();
+      localStorage.setItem('currentUser', JSON.stringify(res.user));
+      updateCurrentUser(res.user);
+
+        console.log('Подписка на пользователя успешно выполнена');
+        updateUser();
+        console.log('обновленный юзер', currentUser)
+      }
+    } catch (error) {
+      console.error('Ошибка при изменении подписки на пользователя:', error);
+    }
+  };
 
 
 
@@ -69,6 +119,13 @@ function DemoUser({ onCardDelete, onCardClick, onCardLike, setDemoUserVisible, u
     <section className="demoUser">
       <button className="back-button" onClick={handleBackClick}>Назад</button>
       <button className="chat-button" onClick={handleChatClick}>Преейти в чат</button>
+      <button
+        className={isSubscribed ? 'unsubscribe-button' : 'subscribe-button'}
+        onClick={handleSubscriptionClick}
+        style={{ display: user._id !== currentUser._id ? 'block' : 'none' }}
+      >
+        {isSubscribed ? 'Отписаться' : 'Подписаться'}
+      </button>
       <div className="demoUser__container">
         <button className="demoUser__container-avatar-button"><img src={user.avatar} alt="" className="profile__container-photo" /></button>
         <div className="demoUser__container-info">
@@ -77,8 +134,8 @@ function DemoUser({ onCardDelete, onCardClick, onCardLike, setDemoUserVisible, u
           </div>
           <div className="demoUser__container-subs-box">
             <p className="demoUser__container-subs-box-item">{cards.length} фото</p>
-            <p className="demoUser__container-subs-box-item">0 подписчиков</p>
-            <p className="demoUser__container-subs-box-item">0 подписок</p>
+            <p className="demoUser__container-subs-box-item">{user.subscribers.length} подписчиков</p>
+            <p className="demoUser__container-subs-box-item">{user.subscriptions.length} подписок</p>
           </div>
           <p className='demoUser__container-text'>{user?.bio || 'Информация'}</p>
         </div>

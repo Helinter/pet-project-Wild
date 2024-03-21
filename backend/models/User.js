@@ -54,6 +54,8 @@ const userSchema = new mongoose.Schema({
     },
     
   },
+  subscriptions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  subscribers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 });
 
 

@@ -8,14 +8,22 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 const saltRounds = 10;
 
 // Получение информации о пользователе
-exports.getUserInfo = (req, res) => {
-  const {
-    _id, name, email, bio, age, avatar, username
-  } = req.user;
+exports.getUserInfo = async (req, res) => {
+  try {
+    // Получаем пользователя из базы данных
+    const user = await User.findById(req.user._id);
 
-  res.status(200).json({
-    _id, name, email, bio, age, avatar, username
-  });
+    // Проверяем, найден ли пользователь
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Отправляем ответ с полными данными пользователя
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    // Обрабатываем ошибку
+    res.status(404).json({ success: false, message: error.message });
+  }
 };
 
 exports.getUserByUsername = async (username, res, next) => {
@@ -156,6 +164,63 @@ exports.getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find();
     res.json(users);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.subscribeToUser = async (req, res, next) => {
+  const { userId } = req.params;
+  const { currentUserID } = req.body; // Получаем ID текущего пользователя из тела запроса
+  try {
+    // Проверяем, что пользователь, на которого подписываемся, существует
+    const userToSubscribe = await User.findById(userId);
+    if (!userToSubscribe) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Добавляем текущего пользователя в подписчики выбранного пользователя
+    userToSubscribe.subscribers.push(currentUserID);
+    await userToSubscribe.save();
+
+    // Добавляем выбранного пользователя в подписки текущего пользователя
+    const currentUser = await User.findById(currentUserID);
+    if (!currentUser) {
+      return res.status(404).json({ message: 'Current user not found' });
+    }
+    currentUser.subscriptions.push(userId);
+    await currentUser.save();
+
+    res.status(200).json({ message: 'Successfully subscribed to user' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+exports.unsubscribeFromUser = async (req, res, next) => {
+  const { userId } = req.params;
+  const { currentUserID } = req.body; // Получаем ID текущего пользователя из тела запроса
+  try {
+    // Проверяем, что пользователь, от которого отписываемся, существует
+    const userToUnsubscribe = await User.findById(userId);
+    if (!userToUnsubscribe) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Удаляем текущего пользователя из подписчиков выбранного пользователя
+    userToUnsubscribe.subscribers = userToUnsubscribe.subscribers.filter(subscriber => subscriber.toString() !== currentUserID);
+    await userToUnsubscribe.save();
+
+    // Удаляем выбранного пользователя из подписок текущего пользователя
+    const currentUser = await User.findById(currentUserID);
+    if (!currentUser) {
+      return res.status(404).json({ message: 'Current user not found' });
+    }
+    currentUser.subscriptions = currentUser.subscriptions.filter(subscription => subscription.toString() !== userId);
+    await currentUser.save();
+
+    res.status(200).json({ message: 'Successfully unsubscribed from user' });
   } catch (error) {
     next(error);
   }

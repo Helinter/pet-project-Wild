@@ -77,7 +77,7 @@ export class Api {
 
     if (res.ok) {
       const data = await res.json();
-      return data;
+      return data;      
     }
 
     console.error(`Ошибка: ${res.status}`);
@@ -363,6 +363,34 @@ async addCommentToCard(cardId, commentText) {
   } catch (error) {
     console.error('Error adding comment to card:', error);
     return Promise.reject(`Error adding comment to card: ${error.message}`);
+  }
+}
+
+async subscribeToUser(userId, currentUserID) {
+  try {
+    const res = await fetch(`${this.url}/users/${userId}/subscribe`, {
+      method: 'POST',
+      headers: this._updateHeaders(),
+      body: JSON.stringify({ currentUserID }), // Отправляем ID текущего пользователя в теле запроса
+    });
+    return this._checkResponse(res);
+  } catch (error) {
+    console.error('Error subscribing to user:', error);
+    return Promise.reject(`Error subscribing to user: ${error.message}`);
+  }
+}
+
+async unsubscribeFromUser(userId, currentUserID) {
+  try {
+    const res = await fetch(`${this.url}/users/${userId}/unsubscribe`, {
+      method: 'POST',
+      headers: this._updateHeaders(),
+      body: JSON.stringify({ currentUserID }), // Отправляем ID текущего пользователя в теле запроса
+    });
+    return this._checkResponse(res);
+  } catch (error) {
+    console.error('Error unsubscribing from user:', error);
+    return Promise.reject(`Error unsubscribing from user: ${error.message}`);
   }
 }
 
