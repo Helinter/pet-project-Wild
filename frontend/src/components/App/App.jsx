@@ -8,13 +8,13 @@ import { api } from '../../utils/MainApi';
 import { useCurrentUser } from '../../context/CurrentUserContext';
 import Home from '../Home/Home';
 import Search from '../Search/Search';
-import Friends from '../Friends/Friends';
 import Messages from '../Messages/Messages';
 import Profile from '../Profile/Profile';
 import EditProfilePopup from '../Popup/EditProfilePopup';
 import EditAvatarPopup from '../Popup/EditAvatarPopup';
 import AddCardPopup from '../Popup/AddCardPopup';
 import ImagePopup from '../Popup/ImagePopup';
+import PopupWithForm from '../Popup/PopupWithForm.jsx';
 
 
 function App() {
@@ -28,21 +28,22 @@ function App() {
   const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = useState(false);
   const [isAddCardPopupOpen, setAddCardPopupOpen] = useState(false);
   const [isImagePopupOpen, setImagePopupOpen] = useState(false);
-
+  const [isDeletePopupOpen, setDeletePopupOpen] = useState(false);
   const [cards, setCards] = useState([]);
   const [selectedCard, setSelectedCard] = useState(null);
   const [isDemoUserVisible, setDemoUserVisible] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState(null);
-  
+
+
   const location = useLocation();
-  
+
   if (location.pathname === '/') {
     navigate('/home', { replace: true });
   }
 
   useEffect(() => {
     api.checkToken()
-    
+
       .catch(error => {
         console.error('Ошибка проверки токена:', error);
         handleLogout();
@@ -78,6 +79,7 @@ function App() {
     setEditAvatarPopupOpen(false);
     setAddCardPopupOpen(false);
     setImagePopupOpen(false);
+    setDeletePopupOpen(false);
   };
 
   const handleLogout = () => {
@@ -143,7 +145,18 @@ function App() {
 
   }
 
+  const handleCardClick = (card) => {
+    setSelectedCard(card);
+    setImagePopupOpen(true);
+  };
+
   const handleDeleteClick = (card) => {
+    setSelectedCard(card);
+   setDeletePopupOpen(true)
+  };
+
+
+  const handleDeleteCard = (card) => {
     api.deleteCard(card._id)
       .then(() => {
         // Создаем новый массив, исключая удаленную карточку
@@ -155,11 +168,13 @@ function App() {
       });
   };
 
-  const handleCardClick = (card) => {
-    setSelectedCard(card);
-    setImagePopupOpen(true);
-  };
 
+  const handleSubmit = (e, card) => {
+    e.preventDefault();
+    console.log(card)
+    handleDeleteCard(card);
+    closeAllPopups();
+  }
 
   return (
     <section className="App">
@@ -183,6 +198,9 @@ function App() {
             onCardClick={handleCardClick}
             onCardLike={handleLikeClick}
             onCardDelete={handleDeleteClick}
+            setDeletePopupOpen={setDeletePopupOpen}
+            onClose={closeAllPopups}
+            isDeletePopupOpen={isDeletePopupOpen}
           />} />
           <Route path="/search" element={<Search
             cards={cards}
@@ -196,11 +214,11 @@ function App() {
             setDemoUserVisible={setDemoUserVisible}
             currentUser={currentUser}
           />} />
-          <Route path="/friends" element={<Friends />} />
           <Route path="/messages" element={<Messages
             selectedChatId={selectedChatId}
             setSelectedChatId={setSelectedChatId}
             handleCardClick={handleCardClick}
+            onClose={closeAllPopups}
           />} />
           <Route path="/profile" element={<Profile
             handleCardClick={handleCardClick}
@@ -214,6 +232,9 @@ function App() {
             handleLogout={handleLogout}
             handleEditAvatarClick={handleEditAvatarClick}
             handleEditProfileClick={handleEditProfileClick}
+            setDeletePopupOpen={setDeletePopupOpen}
+            onClose={closeAllPopups}
+            isDeletePopupOpen={isDeletePopupOpen}
           />} />
         </Route>
       </Routes>
@@ -241,6 +262,16 @@ function App() {
         selectedCard={selectedCard}
         setSelectedCard={setSelectedCard}
       />
+
+      <PopupWithForm
+        title="Вы уверены, что хотите удалить карточку?"
+        name="deleteForm"
+        isOpen={isDeletePopupOpen}
+        onClose={closeAllPopups}
+        onSubmit={(e) => handleSubmit(e, selectedCard)}
+        buttonText="Удалить"
+      />
+
     </section>
   );
 }

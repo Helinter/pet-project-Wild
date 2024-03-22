@@ -18,6 +18,10 @@ function DemoUser({ onCardDelete, onCardClick, onCardLike, setDemoUserVisible, u
   }, [user, currentUser.subscriptions, setIsSubscribed]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     // Получение карточек с сервера
     const fetchCards = async () => {
       try {

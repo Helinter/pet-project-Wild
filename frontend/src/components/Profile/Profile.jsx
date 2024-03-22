@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import Card from '../Card/Card';
 import { api } from '../../utils/MainApi';
 
-function Profile({ handleCardClick, setCards, cards, handleDeleteClick, handleLikeClick, handleAddCardClick, currentUser, handleLogout, handleEditAvatarClick, handleEditProfileClick}) {
+function Profile({ isDeletePopupOpen, onClose, setDeletePopupOpen, handleCardClick, setCards, cards, handleDeleteClick, handleLikeClick, handleAddCardClick, currentUser, handleLogout, handleEditAvatarClick, handleEditProfileClick}) {
 
   useEffect(() => {
     // Получение карточек с сервера
@@ -59,6 +59,7 @@ console.log(currentUser)
             handleClick={handleCardClick}
             handleLikeClick={handleLikeClick}
             handleDeleteClick={handleDeleteClick}
+            setDeletePopupOpen={setDeletePopupOpen}
           />
         ))}
       </div>

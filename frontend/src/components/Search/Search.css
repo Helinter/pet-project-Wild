@@ -153,6 +153,7 @@
 .subscription-userAvatar {
   width: 80px;
   border-radius: 50px;
+  cursor: pointer;
 }
 
 .subscription-userInfo {

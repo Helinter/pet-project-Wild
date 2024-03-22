@@ -5,6 +5,7 @@ import AddMedia from '../../images/icons/addMedia.svg';
 import Micro from '../../images/icons/micro.svg';
 import Send from '../../images/icons8-бумажный-самолетик-64 (1).png';
 import { api } from '../../utils/MainApi';
+import PopupWithForm from '../Popup/PopupWithForm.jsx';
 
 const socket = io('http://localhost:2999');
 
@@ -19,6 +20,8 @@ function Messages({ handleCardClick, selectedChatId, setSelectedChatId }) {
   const [showImageSelectedNotification, setShowImageSelectedNotification] = useState(false);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+  const [deletePopupType, setDeletePopupType] = useState(null);
+  const [isChatDeletePopupOpen, setIsChatDeletePopupOpen] = useState(false);
 
   // При монтировании компонента проверяем localStorage
   useEffect(() => {
@@ -192,6 +195,7 @@ function Messages({ handleCardClick, selectedChatId, setSelectedChatId }) {
     api.deleteChat(selectedChatId);
     setChats(prevChats => prevChats.filter(chat => chat.chat._id !== selectedChatId));
     setSelectedChatId(null);
+    localStorage.removeItem('selectedChatId');
     handleCloseContextMenu();
   };
 
@@ -200,6 +204,32 @@ function Messages({ handleCardClick, selectedChatId, setSelectedChatId }) {
     setChats(prevChats => prevChats.map(chat => chat.chat._id === selectedChatId ? { ...chat, chat: { ...chat.chat, messages: [] } } : chat));
     handleCloseContextMenu();
   };
+
+  const openDeletePopup = () => {
+  setDeletePopupType('delete');
+  setIsChatDeletePopupOpen(true);
+}
+
+const openClearPopup = () => {
+  setDeletePopupType('clear');
+  setIsChatDeletePopupOpen(true);
+}
+
+const closeDeletePopup = () => {
+  setIsChatDeletePopupOpen(false)
+}
+
+
+const handleSubmit = (e) => {
+  e.preventDefault();
+  if (deletePopupType === 'clear') {
+    handleClearChat();
+    closeDeletePopup();
+  } else {
+    handleDeleteChat();
+    closeDeletePopup();
+  }
+}
 
   return (
     <section className="messages" onClick={handleCloseContextMenu}>
@@ -230,7 +260,8 @@ function Messages({ handleCardClick, selectedChatId, setSelectedChatId }) {
               key={chat._id}
               className={`messages-list__list-item ${selectedChatId === chat.chat?._id ? 'messages-list__list-item_selected' : ''}`}
               onClick={() => handleChatSelect(chat)}
-              onContextMenu={(e) => handleContextMenu(e, chat)} // Добавляем обработчик контекстного меню
+              onContextMenu={(e) => handleContextMenu(e, chat)}
+              
             >
               {chat.otherUser && (
                 <>
@@ -245,10 +276,10 @@ function Messages({ handleCardClick, selectedChatId, setSelectedChatId }) {
           ))}
           {contextMenuVisible && (
             <div className="context-menu" style={{ left: contextMenuPosition.x, top: contextMenuPosition.y }}>
-              <div className="context-menu-item" onClick={handleDeleteChat}>
+              <div className="context-menu-item" onClick={openDeletePopup}>
                 Удалить чат
               </div>
-              <div className="context-menu-item" onClick={handleClearChat}>
+              <div className="context-menu-item" onClick={openClearPopup}>
                 Очистить чат
               </div>
             </div>
@@ -313,7 +344,15 @@ function Messages({ handleCardClick, selectedChatId, setSelectedChatId }) {
           </div>
         </div>
       )}
-
+<PopupWithForm
+  title={deletePopupType === 'clear' ? "Вы уверены, что хотите очистить чат?" : "Вы уверены, что хотите удалить чат?"}
+  name={deletePopupType === 'clear' ? "clearForm" : "deleteForm"}
+  isOpen={isChatDeletePopupOpen}
+  onClose={closeDeletePopup}
+  onSubmit={handleSubmit}
+  buttonText={deletePopupType === 'clear' ? "Очистить" : "Удалить"}
+>
+</PopupWithForm>
     </section>
   );
 }

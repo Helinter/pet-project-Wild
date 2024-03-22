@@ -174,7 +174,7 @@ function Search({
           {uniqueSubscriptionUsers.map((user) => (
             <div key={user._id} className="subscription">
               <div className="subscription-userInfo">
-                <img src={user.avatar} alt="User Avatar" className="subscription-userAvatar" />
+                <img onClick={() => handleButtonClick(user)} src={user.avatar} alt="User Avatar" className="subscription-userAvatar" />
                 <span className="subscription-userName">{user.name}</span>
                 <span className="subscription-userUsername">{user.username}</span>
               </div>

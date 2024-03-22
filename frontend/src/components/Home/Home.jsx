@@ -8,6 +8,9 @@ function Home({
   cards,
   onCardLike,
   onCardDelete,
+  setDeletePopupOpen,
+  onClose,
+  isDeletePopupOpen
 }) {
 
   useEffect(() => {
@@ -25,7 +28,7 @@ function Home({
     <section className="home">
       <section className="elements">
         {cards.slice().reverse().map((card) => (
-          <Card key={card._id} card={card} handleClick={onCardClick} handleLikeClick={onCardLike} handleDeleteClick={onCardDelete} />
+          <Card key={card._id} card={card} handleClick={onCardClick} handleLikeClick={onCardLike} handleDeleteClick={onCardDelete} setDeletePopupOpen={setDeletePopupOpen}/>
         ))}
       </section>
     </section>
