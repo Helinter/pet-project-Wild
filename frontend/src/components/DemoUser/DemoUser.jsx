@@ -45,6 +45,10 @@ const updateUser = async () => {
   }
 };
 
+useEffect(()=>{
+  updateUser()
+}, [])
+
 
   const handleBackClick = () => {
     setDemoUserVisible(false);

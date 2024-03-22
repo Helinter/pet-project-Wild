@@ -194,6 +194,7 @@ function App() {
             setSelectedChatId={setSelectedChatId}
             isDemoUserVisible={isDemoUserVisible}
             setDemoUserVisible={setDemoUserVisible}
+            currentUser={currentUser}
           />} />
           <Route path="/friends" element={<Friends />} />
           <Route path="/messages" element={<Messages
