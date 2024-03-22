@@ -15,12 +15,38 @@ function Search({
   onCardDelete,
   currentUser,
 }) {
-
   const [inputValue, setInputValue] = useState('');
   const [allUsers, setAllUsers] = useState([]);
   const [foundUsers, setFoundUsers] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [demoUser, setDemoUser] = useState([]);
+  const [subscriptionUsers, setSubscriptionUsers] = useState([]);
+
+
+  useEffect(() => {
+    if (!isDemoUserVisible) {
+      // Загрузить данные о карточках и подписках заново
+      api.getCards()
+        .then((cardsData) => {
+          setCards(cardsData);
+        })
+        .catch((error) => {
+          console.error('Ошибка при загрузке карточек:', error);
+        });
+  
+      const fetchSubscriptionUsers = async () => {
+        const usersData = [];
+        for (const card of cards) {
+          const userData = await api.getUserById(card.owner);
+          usersData.push(userData);
+        }
+        setSubscriptionUsers(usersData);
+      };
+  
+      fetchSubscriptionUsers();
+    }
+  }, [isDemoUserVisible]);
+  
 
   useEffect(() => {
     api.getCards()
@@ -55,6 +81,19 @@ function Search({
     localStorage.setItem('isDemoUserVisible', JSON.stringify(isDemoUserVisible));
   }, [demoUser, isDemoUserVisible]);
 
+  useEffect(() => {
+    const fetchSubscriptionUsers = async () => {
+      const usersData = [];
+      for (const card of cards) {
+        const userData = await api.getUserById(card.owner);
+        usersData.push(userData);
+      }
+      setSubscriptionUsers(usersData);
+    };
+
+    fetchSubscriptionUsers();
+  }, [cards]);
+
   const handleInputChange = (event) => {
     const value = event.target.value;
     setInputValue(value);
@@ -73,8 +112,11 @@ function Search({
     setShowDropdown(false);
   };
 
-  // Функция для фильтрации карточек по подпискам текущего пользователя
-  const filteredCards = cards.filter((card) => currentUser.subscriptions.includes(card.owner));
+  const uniqueSubscriptionUsers = subscriptionUsers.filter((user, index, self) =>
+  index === self.findIndex((u) => (
+    u._id === user._id
+  ))
+);
 
   return (
     <>
@@ -92,7 +134,7 @@ function Search({
                   onChange={handleInputChange}
                   autoComplete="off"
                 />
-                <span className="span">{}</span>
+                <span className="span">{ }</span>
               </div>
             </form>
             {showDropdown && inputValue !== '' && (
@@ -127,31 +169,32 @@ function Search({
         />
       )}
 
-{!isDemoUserVisible && (
-      <section className="subs-photo">
-        {filteredCards.map((card) => (
-          <div key={card._id} className="subscription">
-            <img src={card.owner.avatar} alt="User Avatar" className="subscription-userAvatar" />
-            <div className="subscription-userInfo">
-              <span className="subscription-userName">{card.owner.name}</span>
-              <span className="subscription-userUsername">{card.owner.username}</span>
+      {!isDemoUserVisible && (
+        <section className="subs-photo">
+          {uniqueSubscriptionUsers.map((user) => (
+            <div key={user._id} className="subscription">
+              <div className="subscription-userInfo">
+                <img src={user.avatar} alt="User Avatar" className="subscription-userAvatar" />
+                <span className="subscription-userName">{user.name}</span>
+                <span className="subscription-userUsername">{user.username}</span>
+              </div>
+              <div className="subscription-cards-container">
+                {cards
+                  .filter((c) => c.owner === user._id)
+                  .map((c) => (
+                    <Card
+                      key={c._id}
+                      card={c}
+                      handleClick={onCardClick}
+                      handleLikeClick={onCardLike}
+                      handleDeleteClick={onCardDelete}
+                    />
+                  ))}
+              </div>
             </div>
-            
-            {cards
-              .filter((c) => c.owner === card.owner._id)
-              .map((c) => (
-                <Card
-                  key={c._id}
-                  card={c}
-                  handleClick={onCardClick}
-                  handleLikeClick={onCardLike}
-                  handleDeleteClick={onCardDelete}
-                />
-              ))}
-          </div>
-        ))}
-      </section>
-)}
+          ))}
+        </section>
+      )}
     </>
   );
 }

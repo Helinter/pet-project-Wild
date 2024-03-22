@@ -5,7 +5,7 @@
   margin-bottom: 10px;
   max-width: 989px;
   width: 100%;
-  position: fixed;
+  position: absolute;
   z-index: 1;
 }
 
@@ -126,26 +126,43 @@
   margin-right: 20px;
 }
 
-.subs-photo{
-
+.subs-photo {
+  display: flex;
+  flex-direction: column;
+  margin-top: 160px;
+  gap: 30px;
 }
 
-.subscription{
-
+.subscription {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10%;
+  border: 2px solid rgba(255, 228, 196, 0.5);
+  border-radius: 30px;
+  padding: 10px;
+  flex-wrap: wrap;
+  width: 830px;
 }
 
-.subscription-userAvatar{
-
+.subscription-cards-container {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
 }
 
-.subscription-userInfo{
-
+.subscription-userAvatar {
+  width: 80px;
+  border-radius: 50px;
 }
 
-.subscription-userName{
-
+.subscription-userInfo {
+  margin-bottom: 20px;
+  width: 500px;
+  align-items: center;
+  display: flex;
+  gap: 20px;
 }
 
-.subscription-userUsername{
-  
-}
+.subscription-userName {}
+
+.subscription-userUsername {}
