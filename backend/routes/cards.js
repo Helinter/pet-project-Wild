@@ -7,7 +7,9 @@ const validateCardData = require('../middlewares/validateCardData');
 const router = express.Router();
 
 router.get('/cards', authMiddleware, cardController.getAllCards);
-router.post('/cards', authMiddleware, validateCardData, cardController.createCard);
+router.post('/cards', authMiddleware, 
+// validateCardData, 
+cardController.createCard);
 router.delete('/cards/:cardId', authMiddleware, validateCardId, cardController.deleteCard);
 router.put('/cards/:cardId/likes', authMiddleware, validateCardId, cardController.likeCard);
 router.delete('/cards/:cardId/likes', authMiddleware, validateCardId, cardController.dislikeCard);

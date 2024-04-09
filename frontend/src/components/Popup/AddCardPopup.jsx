@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PopupWithForm from './PopupWithForm';
+import AddMedia from '../../images/icons/addMedia.svg';
+import { api } from '../../utils/MainApi';
 
 export default function AddCardPopup({ onClose, isOpen, handleAddCard }) {
   const [placeName, setPlaceName] = useState('');
-  const [placeLink, setPlaceLink] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [showImageSelectedNotification, setShowImageSelectedNotification] = useState(false);
+  const inputFileRef = useRef(null);
 
   useEffect(() => {
-    document.body.classList.toggle('popup-opened', isOpen); // Добавляем или убираем класс в зависимости от состояния isOpen
+    document.body.classList.toggle('popup-opened', isOpen);
     document.addEventListener('keydown', handleEscape);
     return () => {
-      document.body.classList.remove('popup-opened'); // Убираем класс при размонтировании компонента
+      document.body.classList.remove('popup-opened');
       document.removeEventListener('keydown', handleEscape);
     };
   }, [isOpen]);
@@ -23,13 +27,34 @@ export default function AddCardPopup({ onClose, isOpen, handleAddCard }) {
   useEffect(() => {
     if (!isOpen) {
       setPlaceName('');
-      setPlaceLink('');
     }
   }, [isOpen]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    handleAddCard(placeName, placeLink);
+    const imageUrl = await uploadImage();
+    handleAddCard(placeName, imageUrl);
+    setSelectedImage(null);
+    setShowImageSelectedNotification(false)
+  };
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    setSelectedImage(file);
+    setShowImageSelectedNotification(true);
+  };
+
+  const uploadImage = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('image', selectedImage);
+      const response = await api.uploadImage(formData);
+      const imageUrl = response.imageUrl.replace(/\\/g, '/');
+      return imageUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
   };
 
   return (
@@ -53,17 +78,33 @@ export default function AddCardPopup({ onClose, isOpen, handleAddCard }) {
         value={placeName}
         onChange={(e) => setPlaceName(e.target.value)}
       />
-      <input
-        className="popup__input popup__input_type_link"
-        type="url"
-        name="formLink"
-        placeholder="Ссылка на картинку"
-        required
-        value={placeLink}
-        onChange={(e) => setPlaceLink(e.target.value)}
-      />
-      <span id="formLink-error" className="error"></span>
+      <div className="chat-input-container" style={{
+        display: 'flex',
+        height: '30px',
+        backgroundColor: 'black',
+        opacity: '0.9',
+        width: '358px',
+        margin: '20px auto',
+        justifyContent: 'center'
+      }}
+      >
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          style={{ display: 'none' }}
+          ref={inputFileRef}
+        />
+        <img src={AddMedia} style={{
+          top: '3px',
+          right: '323px'
+        }}
+          alt="addMedia" className="chat-input-container-icon" onClick={() => inputFileRef.current.click()} />
+        {showImageSelectedNotification && <div className="image-selected-notification" style={{top: '4px'}}>Изображение выбрано</div>}
+      </div>
       
+      <span id="formLink-error" className="error"></span>
+
     </PopupWithForm>
   );
 }
