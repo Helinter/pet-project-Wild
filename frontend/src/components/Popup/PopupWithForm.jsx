@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-function PopupWithForm({ title, name, isOpen, onClose, children, onSubmit, buttonText }) {
+function PopupWithForm({ title, name, isOpen, onClose, children, onSubmit, buttonText, isPopupButtonDisabled}) {
   const popupClassName = `popup popup_type_${name} ${isOpen ? 'popup_opened' : ''}`;
 
   useEffect(() => {
@@ -25,7 +25,7 @@ function PopupWithForm({ title, name, isOpen, onClose, children, onSubmit, butto
         <h2 className="popup__container-title">{title}</h2>
         <form name={name} className="form" noValidate onSubmit={onSubmit}>
           {children}
-          <button type="submit" className="popup__container-button" id="cardSubmit">
+          <button type="submit" className="popup__container-button" id="cardSubmit" disabled={isPopupButtonDisabled ? "disabled" : ""}>
             {buttonText}
           </button>
         </form>

@@ -153,6 +153,11 @@ body.popup-opened {
   opacity: 0.8;
 }
 
+.popup__container-button:disabled {
+  cursor: auto;
+  opacity: 0.3;
+}
+
 @media screen and (max-width: 615px) {
   .popup__container-button {
     width: 238px;

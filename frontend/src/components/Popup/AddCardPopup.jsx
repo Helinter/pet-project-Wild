@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PopupWithForm from './PopupWithForm';
-import AddMedia from '../../images/icons/addMedia.svg';
 
-export default function AddCardPopup({ onClose, isOpen, handleAddCard,  setSelectedImage, showImageSelectedNotification, setShowImageSelectedNotification, uploadImage, handleImageUpload }) {
+export default function AddCardPopup({ onClose, isOpen, handleAddCard, setSelectedImage, showImageSelectedNotification, setShowImageSelectedNotification, uploadImage, handleImageUpload, selectedImage, setIsPopupButtonDisabled, isPopupButtonDisabled }) {
   const [placeName, setPlaceName] = useState('');
   const inputFileRef = useRef(null);
 
@@ -27,6 +26,15 @@ export default function AddCardPopup({ onClose, isOpen, handleAddCard,  setSelec
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (placeName !== "" && selectedImage) {
+      setIsPopupButtonDisabled(false)
+    }else {
+      setIsPopupButtonDisabled(true)
+    }
+    
+  }, [placeName, selectedImage])
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const imageUrl = await uploadImage();
@@ -43,6 +51,8 @@ export default function AddCardPopup({ onClose, isOpen, handleAddCard,  setSelec
       onClose={onClose}
       onSubmit={handleSubmit}
       buttonText="Загрузить"
+      isPopupButtonDisabled={isPopupButtonDisabled}
+
     >
       <span id="formPlace-error" className="error"></span>
       <input
@@ -56,16 +66,22 @@ export default function AddCardPopup({ onClose, isOpen, handleAddCard,  setSelec
         value={placeName}
         onChange={(e) => setPlaceName(e.target.value)}
       />
-      <div className="chat-input-container" style={{
+      <div className="chat-input-container" onClick={() => inputFileRef.current.click()} style={{
         display: 'flex',
         height: '30px',
-        backgroundColor: 'black',
+        backgroundColor: 'white',
         opacity: '0.9',
         width: '358px',
         margin: '20px auto',
-        justifyContent: 'center'
+        borderRadius: '3px',
+        color: 'black',
+        cursor: 'pointer',
+        borderBottom: '1px solid rgba(0, 0, 0, 0.2)'
       }}
-      >
+      >{!selectedImage && <p style={{
+        margin: '0',
+      }}>
+        Выберите изображение</p>}
         <input
           type="file"
           accept="image/*"
@@ -73,14 +89,10 @@ export default function AddCardPopup({ onClose, isOpen, handleAddCard,  setSelec
           style={{ display: 'none' }}
           ref={inputFileRef}
         />
-        <img src={AddMedia} style={{
-          top: '3px',
-          right: '323px'
-        }}
-          alt="addMedia" className="chat-input-container-icon" onClick={() => inputFileRef.current.click()} />
-        {showImageSelectedNotification && <div className="image-selected-notification" style={{top: '4px'}}>Изображение выбрано</div>}
+
+        {showImageSelectedNotification && <div className="image-selected-notification" style={{ top: '4px' }}>Изображение выбрано</div>}
       </div>
-      
+
       <span id="formLink-error" className="error"></span>
 
     </PopupWithForm>

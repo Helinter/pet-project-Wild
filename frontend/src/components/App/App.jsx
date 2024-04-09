@@ -35,6 +35,7 @@ function App() {
   const [selectedChatId, setSelectedChatId] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showImageSelectedNotification, setShowImageSelectedNotification] = useState(false);
+  const [isPopupButtonDisabled, setIsPopupButtonDisabled]= useState(true)
 
 
   const location = useLocation();
@@ -284,6 +285,9 @@ function App() {
           setShowImageSelectedNotification={setShowImageSelectedNotification}
           uploadImage={uploadImage}
           handleImageUpload={handleImageUpload}
+          selectedImage={selectedImage}
+          setIsPopupButtonDisabled={setIsPopupButtonDisabled}
+          isPopupButtonDisabled={isPopupButtonDisabled}
       />
       <ImagePopup
         link={selectedCard?.link}
