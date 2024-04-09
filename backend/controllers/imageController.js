@@ -40,6 +40,7 @@ exports.uploadImage = (req, res, next) => {
 
       // Формируем URL для доступа к загруженному изображению
       const imageUrl = `${req.protocol}://${req.get('host')}/${newImage.path}`;
+      
 
       res.status(200).json({ message: 'Image uploaded successfully', imageUrl });
     } catch (error) {

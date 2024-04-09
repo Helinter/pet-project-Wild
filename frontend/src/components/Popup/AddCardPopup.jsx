@@ -40,7 +40,7 @@ export default function AddCardPopup({ onClose, isOpen, handleAddCard, setSelect
     const imageUrl = await uploadImage();
     handleAddCard(placeName, imageUrl);
     setSelectedImage(null);
-    setShowImageSelectedNotification(false)
+    setShowImageSelectedNotification(false);
   };
 
   return (
@@ -69,7 +69,7 @@ export default function AddCardPopup({ onClose, isOpen, handleAddCard, setSelect
       <div className="chat-input-container" onClick={() => inputFileRef.current.click()} style={{
         display: 'flex',
         height: '30px',
-        backgroundColor: 'white',
+        backgroundColor: 'bisque',
         opacity: '0.9',
         width: '358px',
         margin: '20px auto',

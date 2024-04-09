@@ -35,7 +35,7 @@ function App() {
   const [selectedChatId, setSelectedChatId] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showImageSelectedNotification, setShowImageSelectedNotification] = useState(false);
-  const [isPopupButtonDisabled, setIsPopupButtonDisabled]= useState(true)
+  const [isPopupButtonDisabled, setIsPopupButtonDisabled] = useState(true)
 
 
   const location = useLocation();
@@ -155,7 +155,7 @@ function App() {
 
   const handleDeleteClick = (card) => {
     setSelectedCard(card);
-   setDeletePopupOpen(true)
+    setDeletePopupOpen(true)
   };
 
 
@@ -242,11 +242,11 @@ function App() {
             handleCardClick={handleCardClick}
             onClose={closeAllPopups}
             selectedImage={selectedImage}
-        setSelectedImage={setSelectedImage}
-         showImageSelectedNotification={showImageSelectedNotification}
-          setShowImageSelectedNotification={setShowImageSelectedNotification}
-          uploadImage={uploadImage}
-          handleImageUpload={handleImageUpload}
+            setSelectedImage={setSelectedImage}
+            showImageSelectedNotification={showImageSelectedNotification}
+            setShowImageSelectedNotification={setShowImageSelectedNotification}
+            uploadImage={uploadImage}
+            handleImageUpload={handleImageUpload}
           />} />
           <Route path="/profile" element={<Profile
             handleCardClick={handleCardClick}
@@ -275,19 +275,25 @@ function App() {
         onClose={closeAllPopups}
         isOpen={isEditAvatarPopupOpen}
         handleUpdateAvatar={handleUpdateAvatar}
+        selectedImage={selectedImage}
+        handleImageUpload={handleImageUpload}
+        showImageSelectedNotification={showImageSelectedNotification}
+        uploadImage={uploadImage}
+        setSelectedImage={setSelectedImage}
+        setShowImageSelectedNotification={setShowImageSelectedNotification}
       />
       <AddCardPopup
         onClose={closeAllPopups}
         isOpen={isAddCardPopupOpen}
         handleAddCard={handleAddCard}
         setSelectedImage={setSelectedImage}
-         showImageSelectedNotification={showImageSelectedNotification}
-          setShowImageSelectedNotification={setShowImageSelectedNotification}
-          uploadImage={uploadImage}
-          handleImageUpload={handleImageUpload}
-          selectedImage={selectedImage}
-          setIsPopupButtonDisabled={setIsPopupButtonDisabled}
-          isPopupButtonDisabled={isPopupButtonDisabled}
+        showImageSelectedNotification={showImageSelectedNotification}
+        setShowImageSelectedNotification={setShowImageSelectedNotification}
+        uploadImage={uploadImage}
+        handleImageUpload={handleImageUpload}
+        selectedImage={selectedImage}
+        setIsPopupButtonDisabled={setIsPopupButtonDisabled}
+        isPopupButtonDisabled={isPopupButtonDisabled}
       />
       <ImagePopup
         link={selectedCard?.link}

@@ -14,6 +14,7 @@ require('dotenv').config();
 const app = express();
 
 app.use(cors());
+
 app.use(express.json());
 
 const { PORT = 2999 } = process.env;
@@ -29,7 +30,7 @@ const pathToUploads = './uploads';
 // Настройка маршрута для обслуживания статических файлов из директории с изображениями
 app.use('/uploads', express.static(pathToUploads, {
   setHeaders: (res, path, stat) => {
-    // Установка заголовка Cross-Origin-Resource-Policy
+    // Установка заголовка Cross-Origin-Resource-Policy на cross-origin
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
   }
 }));

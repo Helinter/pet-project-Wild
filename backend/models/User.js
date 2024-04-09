@@ -38,8 +38,9 @@ const userSchema = new mongoose.Schema({
     default: 'http://static.tildacdn.com/tild3364-3662-4439-a262-313239363932/DSC_2841.jpg',
     validate: {
       validator: (value) => {
-        const urlRegex = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]+#?$/;
-        return urlRegex.test(value);
+        const encodedUrl = encodeURI(value);
+        const urlRegex = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+        return urlRegex.test(encodedUrl);
       },
       message: 'Invalid avatar URL',
     },
