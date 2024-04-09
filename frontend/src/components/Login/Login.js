@@ -34,13 +34,12 @@ function Login({ setIsLogedin }) {
         if (response.token) {
           setToken(response.token);
           setIsLogedin(true);
-          const storedCurrentUser = localStorage.getItem('currentUser');
+          
           const userData = await api.getUserInfo();
           if (userData) {
             updateCurrentUser(userData.user);
-            if (!storedCurrentUser) {
               localStorage.setItem('currentUser', JSON.stringify(userData.user));
-            }
+            
           }
           navigate('/home');
         }
