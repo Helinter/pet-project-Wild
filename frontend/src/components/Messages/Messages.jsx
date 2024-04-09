@@ -9,15 +9,13 @@ import PopupWithForm from '../Popup/PopupWithForm.jsx';
 
 const socket = io('http://localhost:2999');
 
-function Messages({ handleCardClick, selectedChatId, setSelectedChatId }) {
+function Messages({ handleCardClick, selectedChatId, setSelectedChatId, selectedImage, setSelectedImage, showImageSelectedNotification, setShowImageSelectedNotification, uploadImage, handleImageUpload }) {
   const { currentUser } = useCurrentUser();
   const [chats, setChats] = useState([]);
   const [messageInput, setMessageInput] = useState('');
   const messagesChatRef = useRef(null);
   const inputFileRef = useRef(null);
-  const [selectedImage, setSelectedImage] = useState(null);
   const [searchUsername, setSearchUsername] = useState('');
-  const [showImageSelectedNotification, setShowImageSelectedNotification] = useState(false);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
   const [deletePopupType, setDeletePopupType] = useState(null);
@@ -153,30 +151,11 @@ function Messages({ handleCardClick, selectedChatId, setSelectedChatId }) {
     }
   };
 
-  const uploadImage = async () => {
-    try {
-      const formData = new FormData();
-      formData.append('image', selectedImage);
-      const response = await api.uploadImage(formData);
-      const imageUrl = response.imageUrl.replace(/\\/g, '/');
-      return imageUrl;
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      throw error;
-    }
-  };
-
   const getMessageTime = (timestamp) => {
     const date = new Date(timestamp);
     const hours = date.getHours();
     const minutes = date.getMinutes();
     return `${hours}:${minutes}`;
-  };
-
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    setSelectedImage(file);
-    setShowImageSelectedNotification(true);
   };
 
   const handleContextMenu = (event, chat) => {

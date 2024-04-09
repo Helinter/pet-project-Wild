@@ -33,6 +33,8 @@ function App() {
   const [selectedCard, setSelectedCard] = useState(null);
   const [isDemoUserVisible, setDemoUserVisible] = useState(false);
   const [selectedChatId, setSelectedChatId] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [showImageSelectedNotification, setShowImageSelectedNotification] = useState(false);
 
 
   const location = useLocation();
@@ -176,6 +178,25 @@ function App() {
     closeAllPopups();
   }
 
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    setSelectedImage(file);
+    setShowImageSelectedNotification(true);
+  };
+
+  const uploadImage = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('image', selectedImage);
+      const response = await api.uploadImage(formData);
+      const imageUrl = response.imageUrl.replace(/\\/g, '/');
+      return imageUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
+  };
+
   return (
     <section className="App">
       {isLogedin ? <Bar
@@ -219,6 +240,12 @@ function App() {
             setSelectedChatId={setSelectedChatId}
             handleCardClick={handleCardClick}
             onClose={closeAllPopups}
+            selectedImage={selectedImage}
+        setSelectedImage={setSelectedImage}
+         showImageSelectedNotification={showImageSelectedNotification}
+          setShowImageSelectedNotification={setShowImageSelectedNotification}
+          uploadImage={uploadImage}
+          handleImageUpload={handleImageUpload}
           />} />
           <Route path="/profile" element={<Profile
             handleCardClick={handleCardClick}
@@ -252,6 +279,11 @@ function App() {
         onClose={closeAllPopups}
         isOpen={isAddCardPopupOpen}
         handleAddCard={handleAddCard}
+        setSelectedImage={setSelectedImage}
+         showImageSelectedNotification={showImageSelectedNotification}
+          setShowImageSelectedNotification={setShowImageSelectedNotification}
+          uploadImage={uploadImage}
+          handleImageUpload={handleImageUpload}
       />
       <ImagePopup
         link={selectedCard?.link}

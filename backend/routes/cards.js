@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get('/cards', authMiddleware, cardController.getAllCards);
 router.post('/cards', authMiddleware, 
-// validateCardData, 
+// validateCardData, включить валидацию в продакшн версии (отключена из-за url http)
 cardController.createCard);
 router.delete('/cards/:cardId', authMiddleware, validateCardId, cardController.deleteCard);
 router.put('/cards/:cardId/likes', authMiddleware, validateCardId, cardController.likeCard);

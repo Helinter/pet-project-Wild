@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PopupWithForm from './PopupWithForm';
 import AddMedia from '../../images/icons/addMedia.svg';
-import { api } from '../../utils/MainApi';
 
-export default function AddCardPopup({ onClose, isOpen, handleAddCard }) {
+export default function AddCardPopup({ onClose, isOpen, handleAddCard,  setSelectedImage, showImageSelectedNotification, setShowImageSelectedNotification, uploadImage, handleImageUpload }) {
   const [placeName, setPlaceName] = useState('');
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [showImageSelectedNotification, setShowImageSelectedNotification] = useState(false);
   const inputFileRef = useRef(null);
 
   useEffect(() => {
@@ -36,25 +33,6 @@ export default function AddCardPopup({ onClose, isOpen, handleAddCard }) {
     handleAddCard(placeName, imageUrl);
     setSelectedImage(null);
     setShowImageSelectedNotification(false)
-  };
-
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    setSelectedImage(file);
-    setShowImageSelectedNotification(true);
-  };
-
-  const uploadImage = async () => {
-    try {
-      const formData = new FormData();
-      formData.append('image', selectedImage);
-      const response = await api.uploadImage(formData);
-      const imageUrl = response.imageUrl.replace(/\\/g, '/');
-      return imageUrl;
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      throw error;
-    }
   };
 
   return (
