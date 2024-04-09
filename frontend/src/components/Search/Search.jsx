@@ -86,13 +86,16 @@ function Search({
       const usersData = [];
       for (const card of cards) {
         const userData = await api.getUserById(card.owner);
-        usersData.push(userData);
+        // Проверяем, содержится ли id пользователя в подписках текущего пользователя
+        if (currentUser.subscriptions.includes(userData._id)) {
+          usersData.push(userData);
+        }
       }
       setSubscriptionUsers(usersData);
     };
-
+  
     fetchSubscriptionUsers();
-  }, [cards]);
+  }, [cards, currentUser]);
 
   const handleInputChange = (event) => {
     const value = event.target.value;
