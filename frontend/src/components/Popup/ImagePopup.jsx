@@ -123,7 +123,7 @@ function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelec
               <button className="add-comment-button" onClick={handleAddComment}>Добавить</button>
             </div>
             <ul className="comment-list">
-              {comments.map((comment, index) => (
+              {comments.slice().reverse().map((comment, index) => (
                 <li className="comment" key={index}>
                   {comment.user && comment.user.avatar && (
                     <img src={comment.user.avatar} alt={comment.user.username} className="comment-avatar" />
