@@ -344,6 +344,8 @@ function App() {
         cards={cards}
         selectedCard={selectedCard}
         setSelectedCard={setSelectedCard}
+        handleButtonClick={handleButtonClick}
+        setImagePopupOpen={setImagePopupOpen}
       />
 
       <PopupWithForm

@@ -214,7 +214,6 @@ function Messages({ handleButtonClick, handleCardClick, selectedChatId, setSelec
     const foundChat = chats.find(chat => chat.chat._id === selectedChatId);
     if (foundChat) {
       const otherUser = await api.getUserById(foundChat.otherUser._id);
-      console.log(otherUser);
       handleButtonClick(otherUser);
     }
   };

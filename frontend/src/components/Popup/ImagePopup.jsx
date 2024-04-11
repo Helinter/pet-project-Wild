@@ -2,7 +2,7 @@ import { api } from '../../utils/MainApi';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelectedCard, isChatImage }) {
+function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelectedCard, handleButtonClick, setImagePopupOpen }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [commentInput, setCommentInput] = useState('');
@@ -25,6 +25,12 @@ function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelec
       onClose();
     }
   };
+
+const openDemoUser= async (user) =>{
+  const demoUser = await api.getUserByUsername(user.username);
+      handleButtonClick(demoUser);
+      setImagePopupOpen(false);
+}
 
   useEffect(() => {
     setComments([]);
@@ -127,7 +133,7 @@ function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelec
               {comments.slice().reverse().map((comment, index) => (
                 <li className="comment" key={index}>
                   {comment.user && comment.user.avatar && (
-                    <img src={comment.user.avatar} alt={comment.user.username} className="comment-avatar" />
+                    <img src={comment.user.avatar} alt={comment.user.username} className="comment-avatar" onClick={()=>{openDemoUser(comment.user)}}/>
                   )}
                   <div className="comment-container">
                     {comment.user && comment.user.username && (
