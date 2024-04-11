@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../../utils/MainApi';
-import DemoUser from '../DemoUser/DemoUser';
 import Card from '../Card/Card';
 
 function Search({
   isDemoUserVisible,
   setDemoUserVisible,
-  selectedChatId,
-  setSelectedChatId,
   setCards,
   onCardClick,
   cards,
   onCardLike,
   onCardDelete,
   currentUser,
+  demoUser,
+  setDemoUser,
+  showDropdown,
+  setShowDropdown,
+  handleButtonClick
 }) {
   const [inputValue, setInputValue] = useState('');
   const [allUsers, setAllUsers] = useState([]);
   const [foundUsers, setFoundUsers] = useState([]);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [demoUser, setDemoUser] = useState([]);
   const [subscriptionUsers, setSubscriptionUsers] = useState([]);
 
 
@@ -33,7 +33,7 @@ function Search({
         .catch((error) => {
           console.error('Ошибка при загрузке карточек:', error);
         });
-  
+
       const fetchSubscriptionUsers = async () => {
         const usersData = [];
         for (const card of cards) {
@@ -42,11 +42,11 @@ function Search({
         }
         setSubscriptionUsers(usersData);
       };
-  
+
       fetchSubscriptionUsers();
     }
   }, [isDemoUserVisible]);
-  
+
 
   useEffect(() => {
     api.getCards()
@@ -65,15 +65,6 @@ function Search({
         console.error('Ошибка при загрузке пользователей:', error);
       });
 
-    const storedDemoUser = localStorage.getItem('demoUser');
-    if (storedDemoUser) {
-      setDemoUser(JSON.parse(storedDemoUser));
-    }
-
-    const storedIsDemoUserVisible = localStorage.getItem('isDemoUserVisible');
-    if (storedIsDemoUserVisible) {
-      setDemoUserVisible(JSON.parse(storedIsDemoUserVisible));
-    }
   }, []);
 
   useEffect(() => {
@@ -93,7 +84,7 @@ function Search({
       }
       setSubscriptionUsers(usersData);
     };
-  
+
     fetchSubscriptionUsers();
   }, [cards, currentUser]);
 
@@ -109,17 +100,11 @@ function Search({
     setShowDropdown(filteredUsers.length > 0);
   };
 
-  const handleButtonClick = (user) => {
-    setDemoUserVisible(true);
-    setDemoUser(user);
-    setShowDropdown(false);
-  };
-
   const uniqueSubscriptionUsers = subscriptionUsers.filter((user, index, self) =>
-  index === self.findIndex((u) => (
-    u._id === user._id
-  ))
-);
+    index === self.findIndex((u) => (
+      u._id === user._id
+    ))
+  );
 
   return (
     <>
@@ -157,21 +142,7 @@ function Search({
           </section>
         </div>
       )}
-      {isDemoUserVisible && (
-        <DemoUser
-          selectedChatId={selectedChatId}
-          setSelectedChatId={setSelectedChatId}
-          onCardDelete={onCardDelete}
-          onCardLike={onCardLike}
-          onCardClick={onCardClick}
-          setDemoUserVisible={setDemoUserVisible}
-          user={demoUser}
-          setUser={setDemoUser}
-          cards={cards}
-          setCards={setCards}
-        />
-      )}
-
+      
       {!isDemoUserVisible && (
         <section className="subs-photo">
           {uniqueSubscriptionUsers.map((user) => (

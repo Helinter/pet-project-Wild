@@ -15,6 +15,7 @@ import EditAvatarPopup from '../Popup/EditAvatarPopup';
 import AddCardPopup from '../Popup/AddCardPopup';
 import ImagePopup from '../Popup/ImagePopup';
 import PopupWithForm from '../Popup/PopupWithForm.jsx';
+import DemoUser from '../DemoUser/DemoUser';
 
 
 function App() {
@@ -35,7 +36,10 @@ function App() {
   const [selectedChatId, setSelectedChatId] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showImageSelectedNotification, setShowImageSelectedNotification] = useState(false);
-  const [isPopupButtonDisabled, setIsPopupButtonDisabled] = useState(true)
+  const [isPopupButtonDisabled, setIsPopupButtonDisabled] = useState(true);
+  const [isBarVisible, setIsBarVisible] = useState(true);
+  const [demoUser, setDemoUser] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
 
   const location = useLocation();
@@ -51,6 +55,15 @@ function App() {
         console.error('Ошибка проверки токена:', error);
         handleLogout();
       });
+      const storedDemoUser = localStorage.getItem('demoUser');
+    if (storedDemoUser) {
+      setDemoUser(JSON.parse(storedDemoUser));
+    }
+
+    const storedIsDemoUserVisible = localStorage.getItem('isDemoUserVisible');
+    if (storedIsDemoUserVisible) {
+      setDemoUserVisible(JSON.parse(storedIsDemoUserVisible));
+    }
   }, []);
 
   useEffect(() => {
@@ -198,12 +211,28 @@ function App() {
     }
   };
 
+  const handleBurgerClick = () => {
+    setIsBarVisible(true);
+  }
+
+  const handleBarClose = () => {
+    setIsBarVisible(false);
+  }
+
+  const handleButtonClick = (user) => {
+    setDemoUserVisible(true);
+    setDemoUser(user);
+    setShowDropdown(false);
+  };
+
   return (
     <section className="App">
-      {isLogedin ? <Bar
+      {(isLogedin && isBarVisible) ? <Bar
         isDemoUserVisible={isDemoUserVisible}
         setDemoUserVisible={setDemoUserVisible}
       /> : null}
+      {!isBarVisible && <button className="burger-button" onClick={handleBurgerClick}></button>}
+      {isBarVisible && <button className="bar-close-button" onClick={handleBarClose}></button>}
       <Routes>
         <Route path="/signin" element={isLogedin ? <Navigate to="/home" /> : <Login
           setIsLogedin={setIsLogedin}
@@ -223,6 +252,9 @@ function App() {
             setDeletePopupOpen={setDeletePopupOpen}
             onClose={closeAllPopups}
             isDeletePopupOpen={isDeletePopupOpen}
+            isDemoUserVisible={isDemoUserVisible}
+            setDemoUserVisible={setDemoUserVisible}
+            handleButtonClick={handleButtonClick}
           />} />
           <Route path="/search" element={<Search
             cards={cards}
@@ -235,6 +267,11 @@ function App() {
             isDemoUserVisible={isDemoUserVisible}
             setDemoUserVisible={setDemoUserVisible}
             currentUser={currentUser}
+            demoUser={demoUser}
+            setDemoUser={setDemoUser}
+            showDropdown={showDropdown}
+            setShowDropdown={setShowDropdown}
+            handleButtonClick={handleButtonClick}
           />} />
           <Route path="/messages" element={<Messages
             selectedChatId={selectedChatId}
@@ -247,6 +284,9 @@ function App() {
             setShowImageSelectedNotification={setShowImageSelectedNotification}
             uploadImage={uploadImage}
             handleImageUpload={handleImageUpload}
+            isDemoUserVisible={isDemoUserVisible}
+            setDemoUserVisible={setDemoUserVisible}
+            handleButtonClick={handleButtonClick}
           />} />
           <Route path="/profile" element={<Profile
             handleCardClick={handleCardClick}
@@ -261,8 +301,9 @@ function App() {
             handleEditAvatarClick={handleEditAvatarClick}
             handleEditProfileClick={handleEditProfileClick}
             setDeletePopupOpen={setDeletePopupOpen}
-            onClose={closeAllPopups}
-            isDeletePopupOpen={isDeletePopupOpen}
+            isDemoUserVisible={isDemoUserVisible}
+            setDemoUserVisible={setDemoUserVisible}
+            handleButtonClick={handleButtonClick}
           />} />
         </Route>
       </Routes>
@@ -313,6 +354,21 @@ function App() {
         onSubmit={(e) => handleSubmit(e, selectedCard)}
         buttonText="Удалить"
       />
+
+      {isDemoUserVisible && (
+        <DemoUser
+          selectedChatId={selectedChatId}
+          setSelectedChatId={setSelectedChatId}
+          onCardClick={handleCardClick}
+          onCardLike={handleLikeClick}
+          onCardDelete={handleDeleteClick}
+          setDemoUserVisible={setDemoUserVisible}
+          user={demoUser}
+          setUser={setDemoUser}
+          cards={cards}
+          setCards={setCards}
+        />
+      )}
 
     </section>
   );

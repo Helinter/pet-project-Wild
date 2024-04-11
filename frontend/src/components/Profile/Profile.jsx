@@ -3,9 +3,10 @@ import React, { useEffect } from 'react';
 import Card from '../Card/Card';
 import { api } from '../../utils/MainApi';
 
-function Profile({ isDeletePopupOpen, onClose, setDeletePopupOpen, handleCardClick, setCards, cards, handleDeleteClick, handleLikeClick, handleAddCardClick, currentUser, handleLogout, handleEditAvatarClick, handleEditProfileClick}) {
+function Profile({ handleButtonClick, setDeletePopupOpen, handleCardClick, setCards, cards, handleDeleteClick, handleLikeClick, handleAddCardClick, currentUser, handleLogout, handleEditAvatarClick, handleEditProfileClick, isDemoUserVisible, setDemoUserVisible}) {
 
   useEffect(() => {
+    if (!isDemoUserVisible) {
     // Получение карточек с сервера
     const fetchCards = async () => {
       try {
@@ -18,14 +19,15 @@ function Profile({ isDeletePopupOpen, onClose, setDeletePopupOpen, handleCardCli
       }
     };
 
-    fetchCards();
-  }, [currentUser]);
+    fetchCards();}
+  }, [currentUser, isDemoUserVisible]);
 
 console.log(currentUser)
 
   return (
-
-    <section className="profile">
+<>
+    {!isDemoUserVisible && (
+      <section className="profile">
       <div className="profile__container">
         <button className="profile__container-avatar-button" onClick={handleEditAvatarClick} ><img src={currentUser.avatar} alt="" className="profile__container-photo" /></button>
         <div className="profile__container-info">
@@ -65,6 +67,8 @@ console.log(currentUser)
       </div>
 
     </section>
+  )}
+  </>
 
   );
 }

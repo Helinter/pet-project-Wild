@@ -9,7 +9,7 @@ import PopupWithForm from '../Popup/PopupWithForm.jsx';
 
 const socket = io('http://localhost:2999');
 
-function Messages({ handleCardClick, selectedChatId, setSelectedChatId, selectedImage, setSelectedImage, showImageSelectedNotification, setShowImageSelectedNotification, uploadImage, handleImageUpload }) {
+function Messages({ handleButtonClick, handleCardClick, selectedChatId, setSelectedChatId, selectedImage, setSelectedImage, showImageSelectedNotification, setShowImageSelectedNotification, uploadImage, handleImageUpload, isDemoUserVisible, setDemoUserVisible, }) {
   const { currentUser } = useCurrentUser();
   const [chats, setChats] = useState([]);
   const [messageInput, setMessageInput] = useState('');
@@ -185,33 +185,43 @@ function Messages({ handleCardClick, selectedChatId, setSelectedChatId, selected
   };
 
   const openDeletePopup = () => {
-  setDeletePopupType('delete');
-  setIsChatDeletePopupOpen(true);
-}
-
-const openClearPopup = () => {
-  setDeletePopupType('clear');
-  setIsChatDeletePopupOpen(true);
-}
-
-const closeDeletePopup = () => {
-  setIsChatDeletePopupOpen(false)
-}
-
-
-const handleSubmit = (e) => {
-  e.preventDefault();
-  if (deletePopupType === 'clear') {
-    handleClearChat();
-    closeDeletePopup();
-  } else {
-    handleDeleteChat();
-    closeDeletePopup();
+    setDeletePopupType('delete');
+    setIsChatDeletePopupOpen(true);
   }
-}
+
+  const openClearPopup = () => {
+    setDeletePopupType('clear');
+    setIsChatDeletePopupOpen(true);
+  }
+
+  const closeDeletePopup = () => {
+    setIsChatDeletePopupOpen(false)
+  }
+
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (deletePopupType === 'clear') {
+      handleClearChat();
+      closeDeletePopup();
+    } else {
+      handleDeleteChat();
+      closeDeletePopup();
+    }
+  }
+
+  const handleShowUserPage = async () => {
+    const foundChat = chats.find(chat => chat.chat._id === selectedChatId);
+    if (foundChat) {
+      const otherUser = await api.getUserById(foundChat.otherUser._id);
+      console.log(otherUser);
+      handleButtonClick(otherUser);
+    }
+  };
 
   return (
-    <section className="messages" onClick={handleCloseContextMenu}>
+    <>
+    {!isDemoUserVisible && (<section className="messages" onClick={handleCloseContextMenu}>
       <div className="messages-list">
         <h2 className="messages-list__name-container">
           <p className="messages-list__name">Чаты</p>
@@ -240,7 +250,7 @@ const handleSubmit = (e) => {
               className={`messages-list__list-item ${selectedChatId === chat.chat?._id ? 'messages-list__list-item_selected' : ''}`}
               onClick={() => handleChatSelect(chat)}
               onContextMenu={(e) => handleContextMenu(e, chat)}
-              
+
             >
               {chat.otherUser && (
                 <>
@@ -255,11 +265,14 @@ const handleSubmit = (e) => {
           ))}
           {contextMenuVisible && (
             <div className="context-menu" style={{ left: contextMenuPosition.x, top: contextMenuPosition.y }}>
-              <div className="context-menu-item" onClick={openDeletePopup}>
-                Удалить чат
+              <div className="context-menu-item" onClick={handleShowUserPage}>
+                Страница
               </div>
               <div className="context-menu-item" onClick={openClearPopup}>
                 Очистить чат
+              </div>
+              <div className="context-menu-item" onClick={openDeletePopup}>
+                Удалить чат
               </div>
             </div>
           )}
@@ -270,7 +283,14 @@ const handleSubmit = (e) => {
           <div className="messages-chat-header">
             {selectedChatId && (
               <>
-                <img className="messages-chat-header__photo" src={chats.find(chat => chat.chat._id === selectedChatId)?.otherUser.avatar} alt="photo" />
+                <img
+                  className="messages-chat-header__photo"
+                  src={chats.find(chat => chat.chat._id === selectedChatId)?.otherUser.avatar}
+                  alt="photo"
+                  onClick={handleShowUserPage}
+                />
+
+
                 <p className="messages-chat-header__name">{chats.find(chat => chat.chat._id === selectedChatId)?.otherUser.name}</p>
                 <div className="messages-chat-header__indicator"></div>
               </>
@@ -285,7 +305,7 @@ const handleSubmit = (e) => {
                       className='uploaded-image'
                       src={encodeURI(message.content.image)}
                       alt="uploaded"
-                      onClick={() => handleCardClick({ link: encodeURI(message.content.image) })}
+                      onClick={() => handleCardClick({ link: encodeURI(message.content.image)})}
                     />
                   )}
                   {message.content.text && (
@@ -323,16 +343,18 @@ const handleSubmit = (e) => {
           </div>
         </div>
       )}
-<PopupWithForm
-  title={deletePopupType === 'clear' ? "Вы уверены, что хотите очистить чат?" : "Вы уверены, что хотите удалить чат?"}
-  name={deletePopupType === 'clear' ? "clearForm" : "deleteForm"}
-  isOpen={isChatDeletePopupOpen}
-  onClose={closeDeletePopup}
-  onSubmit={handleSubmit}
-  buttonText={deletePopupType === 'clear' ? "Очистить" : "Удалить"}
->
-</PopupWithForm>
+      <PopupWithForm
+        title={deletePopupType === 'clear' ? "Вы уверены, что хотите очистить чат?" : "Вы уверены, что хотите удалить чат?"}
+        name={deletePopupType === 'clear' ? "clearForm" : "deleteForm"}
+        isOpen={isChatDeletePopupOpen}
+        onClose={closeDeletePopup}
+        onSubmit={handleSubmit}
+        buttonText={deletePopupType === 'clear' ? "Очистить" : "Удалить"}
+      >
+      </PopupWithForm>
     </section>
+  )}
+  </>
   );
 }
 

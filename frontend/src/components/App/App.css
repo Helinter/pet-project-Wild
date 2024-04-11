@@ -4,3 +4,31 @@
     min-height: 100vh;
     min-width: 100vw;
 }
+
+.burger-button{
+  z-index: 10;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  background-color: inherit;
+  background-size: contain;
+  outline: none;
+  border: none;
+  background-image: url(../../images/icons8-hamburger-menu.svg);
+}
+
+.bar-close-button{
+  z-index: 10;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  background-color: inherit;
+  background-size: contain;
+  outline: none;
+  border: none;
+  background-image: url(../../images/Close_Icon.svg);
+}

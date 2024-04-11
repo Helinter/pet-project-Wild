@@ -10,7 +10,10 @@ function Home({
   onCardDelete,
   setDeletePopupOpen,
   onClose,
-  isDeletePopupOpen
+  isDeletePopupOpen,
+  isDemoUserVisible,
+  setDemoUserVisible,
+  handleButtonClick
 }) {
 
   useEffect(() => {

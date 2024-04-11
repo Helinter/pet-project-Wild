@@ -2,7 +2,7 @@ import { api } from '../../utils/MainApi';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelectedCard }) {
+function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelectedCard, isChatImage }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [commentInput, setCommentInput] = useState('');
@@ -27,6 +27,7 @@ function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelec
   };
 
   useEffect(() => {
+    setComments([]);
     document.body.classList.toggle('popup-opened', isOpen);
     document.addEventListener('keydown', handleEscape);
     // Загрузка комментариев при открытии попапа
@@ -109,7 +110,7 @@ function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelec
         <img className="popup__img" src={link} alt={name} />
         <p className="popup__image-container-title">{name}</p>
 
-        {navigate && !location.pathname.includes('/messages') && (
+     
           <div className="comment-section">
             <div className="comment-input-container">
               <input
@@ -138,7 +139,7 @@ function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelec
               ))}
             </ul>
           </div>
-        )}
+  
       </div>
     </div>
   );

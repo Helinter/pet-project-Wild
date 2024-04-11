@@ -16,7 +16,7 @@ const Bar = ({isDemoUserVisible, setDemoUserVisible}) => {
     setSelectedLink(location.pathname);
   }, [location]);
 
-  const handleSearchClick = () =>{
+  const handleLinkClick = () =>{
     setDemoUserVisible(false)
   }
 
@@ -27,25 +27,25 @@ const Bar = ({isDemoUserVisible, setDemoUserVisible}) => {
       </div>
       <ul className="bar__nav-links">
         <li className="bar__nav-link-box">
-          <Link to="/home" className={`bar__nav-link ${selectedLink === '/home' ? 'bar__nav-link-selected' : ''}`}>
+          <Link to="/home" className={`bar__nav-link ${selectedLink === '/home' ? 'bar__nav-link-selected' : ''}`}onClick={handleLinkClick}>
             <img className="bar__nav-link-icon" src={Home} alt="Главная" />
             Главная
           </Link>
         </li>
         <li className="bar__nav-link-box">
-          <Link to="/search" className={`bar__nav-link ${selectedLink === '/search' ? 'bar__nav-link-selected' : ''}`}onClick={handleSearchClick}>
+          <Link to="/search" className={`bar__nav-link ${selectedLink === '/search' ? 'bar__nav-link-selected' : ''}`}onClick={handleLinkClick}>
             <img className="bar__nav-link-icon" src={Search} alt="Поиск" />
             Поиск
           </Link>
         </li>
         <li className="bar__nav-link-box">
-          <Link to="/messages" className={`bar__nav-link ${selectedLink === '/messages' ? 'bar__nav-link-selected' : ''}`}>
+          <Link to="/messages" className={`bar__nav-link ${selectedLink === '/messages' ? 'bar__nav-link-selected' : ''}`}onClick={handleLinkClick}>
             <img className="bar__nav-link-icon" src={Message_Notification} alt="Сообщения" />
             Сообщения
           </Link>
         </li>
         <li className="bar__nav-link-box last-link">
-          <Link to="/profile" className={`bar__nav-link ${selectedLink === '/profile' ? 'bar__nav-link-selected' : ''}`}>
+          <Link to="/profile" className={`bar__nav-link ${selectedLink === '/profile' ? 'bar__nav-link-selected' : ''}`}onClick={handleLinkClick}>
             <img className="bar__nav-link-icon" src={Profile} alt="Профиль" />
             Профиль
           </Link>
