@@ -24,18 +24,19 @@ function Home({
       .catch((error) => {
         console.error('Ошибка при загрузке карточек:', error);
       });
-  }, []);
+  }, [isDemoUserVisible]);
 
   return (
-
-    <section className="home">
+<>
+    {!isDemoUserVisible && (<section className="home">
+      <h1 className='home__title'>Wild v0.9.8 alpha</h1>
       <section className="elements">
         {cards.slice().reverse().map((card) => (
           <Card key={card._id} card={card} handleClick={onCardClick} handleLikeClick={onCardLike} handleDeleteClick={onCardDelete} setDeletePopupOpen={setDeletePopupOpen}/>
         ))}
       </section>
-    </section>
-
+    </section>)}
+    </>
   );
 }
 

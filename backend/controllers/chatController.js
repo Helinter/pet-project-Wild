@@ -104,3 +104,23 @@ exports.clearChat = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.deleteMessage = async (req, res, next) => {
+  try {
+    const { chatId, messageId } = req.params;
+
+    // Находим чат по его ID
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({ message: 'Chat not found' });
+    }
+
+    // Удаляем сообщение из массива сообщений чата
+    chat.messages = chat.messages.filter(message => message._id.toString() !== messageId);
+    await chat.save();
+
+    res.status(204).json({}); // Отправляем пустой объект в ответе
+  } catch (error) {
+    next(error);
+  }
+};

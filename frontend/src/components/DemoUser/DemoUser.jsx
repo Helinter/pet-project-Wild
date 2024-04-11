@@ -83,7 +83,8 @@ useEffect(()=>{
       } catch (error) {
         console.error('Ошибка при создании чата:', error);
       }
-    }
+    } 
+    setDemoUserVisible(false);
   };
 
 
@@ -125,17 +126,9 @@ useEffect(()=>{
   return (
 
     <section className="demoUser">
-      <button className="back-button" onClick={handleBackClick}>Назад</button>
-      <button className="chat-button" onClick={handleChatClick}>Преейти в чат</button>
-      <button
-        className={isSubscribed ? 'unsubscribe-button' : 'subscribe-button'}
-        onClick={handleSubscriptionClick}
-        style={{ display: user._id !== currentUser._id ? 'block' : 'none' }}
-      >
-        {isSubscribed ? 'Отписаться' : 'Подписаться'}
-      </button>
+      
       <div className="demoUser__container">
-        <button className="demoUser__container-avatar-button"><img src={user.avatar} alt="" className="profile__container-photo" /></button>
+        <button className="demoUser__container-avatar-button" style={{ cursor: 'default' }}><img src={user.avatar} alt="" className="profile__container-photo" /></button>
         <div className="demoUser__container-info">
           <div className="demoUser__container-name-box">
             <h2 className="demoUser__container-info-name">{user?.name || 'Гость'}</h2>
@@ -147,6 +140,17 @@ useEffect(()=>{
           </div>
           <p className='demoUser__container-text'>{user?.bio || 'Информация'}</p>
         </div>
+        <div className="buttons-container">
+      <button className="back-button" onClick={handleBackClick}>Назад</button>
+      <button className="chat-button" onClick={handleChatClick}>Преейти в чат</button>
+      <button
+        className={isSubscribed ? 'unsubscribe-button' : 'subscribe-button'}
+        onClick={handleSubscriptionClick}
+        style={{ display: user._id !== currentUser._id ? 'block' : 'none' }}
+      >
+        {isSubscribed ? 'Отписаться' : 'Подписаться'}
+      </button>
+      </div>
       </div>
       <div className="demoUser__photos">
         {cards.map(card => (

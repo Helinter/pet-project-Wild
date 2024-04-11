@@ -20,6 +20,10 @@ function Messages({ handleButtonClick, handleCardClick, selectedChatId, setSelec
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
   const [deletePopupType, setDeletePopupType] = useState(null);
   const [isChatDeletePopupOpen, setIsChatDeletePopupOpen] = useState(false);
+  const [selectedMessageId, setSelectedMessageId] = useState(null);
+  const [contextMenuType, setContextMenuType] = useState(null);
+
+
 
   // При монтировании компонента проверяем localStorage
   useEffect(() => {
@@ -161,9 +165,19 @@ function Messages({ handleButtonClick, handleCardClick, selectedChatId, setSelec
   const handleContextMenu = (event, chat) => {
     event.preventDefault();
     setSelectedChatId(chat.chat._id);
+    setContextMenuType('chat');
     setContextMenuVisible(true);
     setContextMenuPosition({ x: event.clientX, y: event.clientY });
   };
+
+  const handleContextMenuMessage = (event, messageId) => {
+    event.preventDefault();
+    setSelectedMessageId(messageId);
+    setContextMenuType('message');
+    setContextMenuVisible(true);
+    setContextMenuPosition({ x: event.clientX, y: event.clientY });
+  };
+
 
 
   const handleCloseContextMenu = () => {
@@ -218,142 +232,173 @@ function Messages({ handleButtonClick, handleCardClick, selectedChatId, setSelec
     }
   };
 
+  const handleDeleteMessage = () => {
+    api.deleteMessage(selectedChatId, selectedMessageId)
+      .then(() => {
+        setChats(prevChats => {
+          return prevChats.map(chat => {
+            if (chat.chat._id === selectedChatId) {
+              const updatedMessages = chat.chat.messages.filter(message => message._id !== selectedMessageId);
+              return { ...chat, chat: { ...chat.chat, messages: updatedMessages } };
+            }
+            return chat;
+          });
+        });
+        setSelectedMessageId(null);
+        setContextMenuVisible(false);
+      })
+      .catch(error => console.error('Error deleting message:', error));
+  };
+
+
   return (
     <>
-    {!isDemoUserVisible && (<section className="messages" onClick={handleCloseContextMenu}>
-      <div className="messages-list">
-        <h2 className="messages-list__name-container">
-          <p className="messages-list__name">Чаты</p>
-          <div className="chats-usersearch-container">
+      {!isDemoUserVisible && (<section className="messages" onClick={handleCloseContextMenu}>
+        <div className="messages-list">
+          <h2 className="messages-list__name-container">
+            <p className="messages-list__name">Чаты</p>
+            <div className="chats-usersearch-container">
+              <div className="chat-input-container">
+                <img src={Send} alt="Send" className="chat-input-container-icon username-search-icon" onClick={handleCreateChat} />
+                <input
+                  type="text"
+                  placeholder="@username"
+                  className="chat-input-container__input username-search"
+                  value={searchUsername}
+                  onChange={(e) => setSearchUsername(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleCreateChat();
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          </h2>
+          <div className="messages-list__list">
+            {chats.map((chat) => (
+              <div
+                key={chat._id}
+                className={`messages-list__list-item ${selectedChatId === chat.chat?._id ? 'messages-list__list-item_selected' : ''}`}
+                onClick={() => handleChatSelect(chat)}
+                onContextMenu={(e) => handleContextMenu(e, chat)}
+
+              >
+                {chat.otherUser && (
+                  <>
+                    <img className="messages-list__list-item__photo" src={chat.otherUser.avatar} alt="photo" />
+                    <p className="messages-list__list-item__name">{chat.otherUser.name}</p>
+                    <p className="messages-list__list-item__name messages-list__list-item__username">{chat.otherUser.username}</p>
+                  </>
+                )}
+                <div className="messages-list__list-item__indicator"></div>
+              </div>
+
+            ))}
+            {contextMenuVisible && contextMenuType === 'chat' && (
+              <div className="context-menu" style={{ left: contextMenuPosition.x, top: contextMenuPosition.y }}>
+                <div className="context-menu-item" onClick={handleShowUserPage}>
+                  Страница
+                </div>
+                <div className="context-menu-item" onClick={openClearPopup}>
+                  Очистить чат
+                </div>
+                <div className="context-menu-item" onClick={openDeletePopup}>
+                  Удалить чат
+                </div>
+              </div>
+            )}
+
+            {contextMenuVisible && contextMenuType === 'message' && (
+              <div className="context-menu" style={{ left: contextMenuPosition.x, top: contextMenuPosition.y }}>
+                <div className="context-menu-item" onClick={handleDeleteMessage}>
+                  Удалить сообщение
+                </div>
+              </div>
+            )}
+
+
+
+          </div>
+        </div>
+        {selectedChatId && (
+          <div className="messages-chat">
+            <div className="messages-chat-header">
+              {selectedChatId && (
+                <>
+                  <img
+                    className="messages-chat-header__photo"
+                    src={chats.find(chat => chat.chat._id === selectedChatId)?.otherUser.avatar}
+                    alt="photo"
+                    onClick={handleShowUserPage}
+                  />
+
+
+                  <p className="messages-chat-header__name">{chats.find(chat => chat.chat._id === selectedChatId)?.otherUser.name}</p>
+                  <div className="messages-chat-header__indicator"></div>
+                </>
+              )}
+            </div>
+            <div className="messages-chat-chat" ref={messagesChatRef}>
+              {selectedChatId && chats.find(chat => chat.chat._id === selectedChatId)?.chat?.messages.map((message) => (
+                <React.Fragment key={message._id}>
+                  <div className={`messages-chat-chat-message ${message.senderId === currentUser._id ? 'messages-chat-chat-message-owners' : ''}`} onContextMenu={(e) => handleContextMenuMessage(e, message._id)}>
+
+                    {message.content.image && (
+                      <img
+                        className='uploaded-image'
+                        src={encodeURI(message.content.image)}
+                        alt="uploaded"
+                        onClick={() => handleCardClick({ link: encodeURI(message.content.image) })}
+                      />
+                    )}
+                    {message.content.text && (
+                      <p className="message">{message.content.text}</p>
+                    )}
+                    <p className="messages-chat-chat-message-time">{getMessageTime(message.timestamp)}</p>
+                  </div>
+                </React.Fragment>
+              ))}
+            </div>
             <div className="chat-input-container">
-              <img src={Send} alt="Send" className="chat-input-container-icon username-search-icon" onClick={handleCreateChat} />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                style={{ display: 'none' }}
+                ref={inputFileRef}
+              />
+              <img src={AddMedia} alt="addMedia" className="chat-input-container-icon" onClick={() => inputFileRef.current.click()} />
+              <img src={Micro} alt="Micro" className="chat-input-container-icon" />
+              <img src={Send} alt="Send" className="chat-input-container-icon" onClick={handleMessageSend} />
               <input
                 type="text"
-                placeholder="@username"
-                className="chat-input-container__input username-search"
-                value={searchUsername}
-                onChange={(e) => setSearchUsername(e.target.value)}
+                placeholder="Сообщение"
+                className="chat-input-container__input"
+                value={messageInput}
+                onChange={(e) => setMessageInput(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    handleCreateChat();
+                    handleMessageSend();
                   }
                 }}
               />
+              {showImageSelectedNotification && <div className="image-selected-notification">Изображение выбрано</div>}
             </div>
           </div>
-        </h2>
-        <div className="messages-list__list">
-          {chats.map((chat) => (
-            <div
-              key={chat._id}
-              className={`messages-list__list-item ${selectedChatId === chat.chat?._id ? 'messages-list__list-item_selected' : ''}`}
-              onClick={() => handleChatSelect(chat)}
-              onContextMenu={(e) => handleContextMenu(e, chat)}
-
-            >
-              {chat.otherUser && (
-                <>
-                  <img className="messages-list__list-item__photo" src={chat.otherUser.avatar} alt="photo" />
-                  <p className="messages-list__list-item__name">{chat.otherUser.name}</p>
-                  <p className="messages-list__list-item__name messages-list__list-item__username">{chat.otherUser.username}</p>
-                </>
-              )}
-              <div className="messages-list__list-item__indicator"></div>
-            </div>
-
-          ))}
-          {contextMenuVisible && (
-            <div className="context-menu" style={{ left: contextMenuPosition.x, top: contextMenuPosition.y }}>
-              <div className="context-menu-item" onClick={handleShowUserPage}>
-                Страница
-              </div>
-              <div className="context-menu-item" onClick={openClearPopup}>
-                Очистить чат
-              </div>
-              <div className="context-menu-item" onClick={openDeletePopup}>
-                Удалить чат
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-      {selectedChatId && (
-        <div className="messages-chat">
-          <div className="messages-chat-header">
-            {selectedChatId && (
-              <>
-                <img
-                  className="messages-chat-header__photo"
-                  src={chats.find(chat => chat.chat._id === selectedChatId)?.otherUser.avatar}
-                  alt="photo"
-                  onClick={handleShowUserPage}
-                />
-
-
-                <p className="messages-chat-header__name">{chats.find(chat => chat.chat._id === selectedChatId)?.otherUser.name}</p>
-                <div className="messages-chat-header__indicator"></div>
-              </>
-            )}
-          </div>
-          <div className="messages-chat-chat" ref={messagesChatRef}>
-            {selectedChatId && chats.find(chat => chat.chat._id === selectedChatId)?.chat?.messages.map((message) => (
-              <React.Fragment key={message._id}>
-                <div className={`messages-chat-chat-message ${message.senderId === currentUser._id ? 'messages-chat-chat-message-owners' : ''}`}>
-                  {message.content.image && (
-                    <img
-                      className='uploaded-image'
-                      src={encodeURI(message.content.image)}
-                      alt="uploaded"
-                      onClick={() => handleCardClick({ link: encodeURI(message.content.image)})}
-                    />
-                  )}
-                  {message.content.text && (
-                    <p className="message">{message.content.text}</p>
-                  )}
-                  <p className="messages-chat-chat-message-time">{getMessageTime(message.timestamp)}</p>
-                </div>
-              </React.Fragment>
-            ))}
-          </div>
-          <div className="chat-input-container">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              style={{ display: 'none' }}
-              ref={inputFileRef}
-            />
-            <img src={AddMedia} alt="addMedia" className="chat-input-container-icon" onClick={() => inputFileRef.current.click()} />
-            <img src={Micro} alt="Micro" className="chat-input-container-icon" />
-            <img src={Send} alt="Send" className="chat-input-container-icon" onClick={handleMessageSend} />
-            <input
-              type="text"
-              placeholder="Сообщение"
-              className="chat-input-container__input"
-              value={messageInput}
-              onChange={(e) => setMessageInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleMessageSend();
-                }
-              }}
-            />
-            {showImageSelectedNotification && <div className="image-selected-notification">Изображение выбрано</div>}
-          </div>
-        </div>
+        )}
+        <PopupWithForm
+          title={deletePopupType === 'clear' ? "Вы уверены, что хотите очистить чат?" : "Вы уверены, что хотите удалить чат?"}
+          name={deletePopupType === 'clear' ? "clearForm" : "deleteForm"}
+          isOpen={isChatDeletePopupOpen}
+          onClose={closeDeletePopup}
+          onSubmit={handleSubmit}
+          buttonText={deletePopupType === 'clear' ? "Очистить" : "Удалить"}
+        >
+        </PopupWithForm>
+      </section>
       )}
-      <PopupWithForm
-        title={deletePopupType === 'clear' ? "Вы уверены, что хотите очистить чат?" : "Вы уверены, что хотите удалить чат?"}
-        name={deletePopupType === 'clear' ? "clearForm" : "deleteForm"}
-        isOpen={isChatDeletePopupOpen}
-        onClose={closeDeletePopup}
-        onSubmit={handleSubmit}
-        buttonText={deletePopupType === 'clear' ? "Очистить" : "Удалить"}
-      >
-      </PopupWithForm>
-    </section>
-  )}
-  </>
+    </>
   );
 }
 

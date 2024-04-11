@@ -10,5 +10,7 @@ router.post('/chats/messages', chatController.createMessage);
 router.delete('/chats/:chatId', authMiddleware, chatController.deleteChat);
 router.delete('/chats/:chatId/clear', authMiddleware, chatController.clearChat);
 router.post('/upload/image', imageController.uploadImage);
+router.delete('/chats/:chatId/messages/:messageId', authMiddleware, chatController.deleteMessage);
+
 
 module.exports = router;

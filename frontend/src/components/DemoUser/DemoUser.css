@@ -55,16 +55,6 @@
   margin-left: 43px;
 }
 
-.add-button {
-  padding: 0;
-  margin: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  cursor: pointer;
-  outline: none;
-}
-
 .demoUser__container-subs-box {
   display: flex;
   flex-direction: row;
@@ -108,6 +98,15 @@
   border-radius: 50%;
 }
 
+.buttons-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 139px;
+  margin-left: 30px;
+  gap: 5px;
+}
+
 .back-button {
   padding: 0;
   margin: 0;
@@ -121,10 +120,10 @@
   height: 31px;
   border-radius: 10px;
   color: #bfb0a3;
-  margin-left: 43px;
-  position: absolute;
-    top: 85px;
-    right: 140px;
+}
+
+.back-button:hover{
+  opacity: .8;
 }
 
 .chat-button {
@@ -140,10 +139,10 @@
   height: 31px;
   border-radius: 10px;
   color: #bfb0a3;
-  margin-left: 43px;
-  position: absolute;
-    top: 85px;
-    right: 290px;
+}
+
+.chat-button:hover{
+  opacity: .8;
 }
 
 .subscribe-button{
@@ -159,10 +158,10 @@
   height: 31px;
   border-radius: 10px;
   color: #bfb0a3;
-  margin-left: 43px;
-  position: absolute;
-    top: 85px;
-    right: 440px;
+}
+
+.subscribe-button:hover{
+  opacity: .8;
 }
 
 .unsubscribe-button{
@@ -178,8 +177,8 @@
   height: 31px;
   border-radius: 10px;
   color: #bfb0a3;
-  margin-left: 43px;
-  position: absolute;
-    top: 85px;
-    right: 440px;
+}
+
+.unsubscribe-button:hover{
+  opacity: .8;
 }

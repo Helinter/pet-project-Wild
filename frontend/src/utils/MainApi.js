@@ -394,6 +394,20 @@ async unsubscribeFromUser(userId, currentUserID) {
   }
 }
 
+async deleteMessage(chatId, messageId) {
+  try {
+    const res = await fetch(`${this.url}/chats/${chatId}/messages/${messageId}`, {
+      method: 'DELETE',
+      headers: this._updateHeaders(),
+    });
+
+    return this._checkResponse(res);
+  } catch (error) {
+    console.error('Error deleting message:', error);
+    return Promise.reject(`Error deleting message: ${error.message}`);
+  }
+}
+
 
 }
 
