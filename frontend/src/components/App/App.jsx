@@ -40,7 +40,19 @@ function App() {
   const [isBarVisible, setIsBarVisible] = useState(true);
   const [demoUser, setDemoUser] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const location = useLocation();
 
@@ -227,12 +239,12 @@ function App() {
 
   return (
     <section className="App">
-      {(isLogedin && isBarVisible) ? <Bar
+      {(isLogedin && (isBarVisible || windowWidth > 900)) ? <Bar
         isDemoUserVisible={isDemoUserVisible}
         setDemoUserVisible={setDemoUserVisible}
       /> : null}
-      {!isBarVisible && <button className="burger-button" onClick={handleBurgerClick}></button>}
-      {isBarVisible && <button className="bar-close-button" onClick={handleBarClose}></button>}
+      {(!isBarVisible && windowWidth < 900) &&<button className="burger-button" onClick={handleBurgerClick}></button>}
+      {(isBarVisible && windowWidth < 900) && <button className="bar-close-button" onClick={handleBarClose}></button>}
       <Routes>
         <Route path="/signin" element={isLogedin ? <Navigate to="/home" /> : <Login
           setIsLogedin={setIsLogedin}
