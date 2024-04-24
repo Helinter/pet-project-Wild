@@ -22,7 +22,7 @@ text-align: center;
   z-index: 0;
 }
 
-@media screen and (max-width: 879px) {
+@media screen and (max-width: 990px) {
   .elements {
     grid-template-columns: repeat(2, 282px);
     grid-template-rows: repeat(3, 1fr);

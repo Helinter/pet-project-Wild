@@ -5,8 +5,17 @@
     margin-left: 20px;
     max-width: 180px;
     border-right: 1px solid #434343;
-    height: 100vh;
 }
+
+@media only screen and (max-width: 900px) {
+  .bar {
+    position: fixed;
+    background-color: #120f0f;
+    height: 100vh;
+    z-index: 99999;
+  }
+}
+
 
 .logo {
   width: 100%;

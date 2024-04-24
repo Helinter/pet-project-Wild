@@ -109,8 +109,8 @@ function Search({
   return (
     <>
       {!isDemoUserVisible && (
-        <div className="search">
-          <section className="searchForm">
+        <section className="search">
+          <div className="searchForm">
             <form>
               <div className="searchForm__input__container">
                 <input
@@ -139,12 +139,8 @@ function Search({
                 ))}
               </ul>
             )}
-          </section>
-        </div>
-      )}
-      
-      {!isDemoUserVisible && (
-        <section className="subs-photo">
+          </div>
+          <section className="subs-photo">
           {uniqueSubscriptionUsers.map((user) => (
             <div key={user._id} className="subscription">
               <div className="subscription-userInfo">
@@ -168,7 +164,9 @@ function Search({
             </div>
           ))}
         </section>
+        </section>
       )}
+    
     </>
   );
 }

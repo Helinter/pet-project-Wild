@@ -1,5 +1,6 @@
 .page{
   color: #bfb0a3;
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
+    background-color: #120f0f;
 }

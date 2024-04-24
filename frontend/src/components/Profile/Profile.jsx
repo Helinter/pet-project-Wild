@@ -33,8 +33,10 @@ console.log(currentUser)
         <div className="profile__container-info">
           <div className="profile__container-name-box">
             <h2 className="profile__container-info-name">{currentUser?.name || 'Гость'}</h2>
+            <div className='profile__buttons-container'>
             <button onClick={handleEditProfileClick} className="profile__container-info-button">Редактировать</button>
             <button onClick={handleLogout} className="profile__container-info-button">Выйти</button>
+            </div>
           </div>
           <div className="profile__container-subs-box">
             <p className="profile__container-subs-box-item">{cards.length} фото</p>

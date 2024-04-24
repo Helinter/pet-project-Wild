@@ -1,9 +1,14 @@
+.search{
+  display: flex;
+  position: relative;
+  min-width: 340px;
+}
+
 .searchForm {
   display: flex;
   flex-direction: column;
   border-bottom: 1.5px solid rgba(170, 170, 170, 0.2);
   margin-bottom: 10px;
-  max-width: 989px;
   width: 100%;
   position: absolute;
   z-index: 1;
@@ -135,12 +140,10 @@
 .subscription {
   display: flex;
   flex-direction: column;
-  margin-left: 10%;
-  border: 2px solid rgba(255, 228, 196, 0.5);
+  margin-left: 5%;
   border-radius: 30px;
   padding: 10px;
   flex-wrap: wrap;
-  width: 830px;
 }
 
 .subscription-cards-container {
@@ -157,7 +160,6 @@
 
 .subscription-userInfo {
   margin-bottom: 20px;
-  width: 500px;
   align-items: center;
   display: flex;
   gap: 20px;
