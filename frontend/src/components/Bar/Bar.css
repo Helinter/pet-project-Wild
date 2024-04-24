@@ -13,6 +13,7 @@
     background-color: #120f0f;
     height: 100vh;
     z-index: 99999;
+    left: 0;
   }
 }
 
