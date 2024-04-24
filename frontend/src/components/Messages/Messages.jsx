@@ -7,7 +7,7 @@ import Send from '../../images/icons8-бумажный-самолетик-64 (1)
 import { api } from '../../utils/MainApi';
 import PopupWithForm from '../Popup/PopupWithForm.jsx';
 
-const socket = io('http://localhost:2999');
+const socket = io('https://api.wild.nomoredomainsmonster.ru');
 
 function Messages({ handleButtonClick, handleCardClick, selectedChatId, setSelectedChatId, selectedImage, setSelectedImage, showImageSelectedNotification, setShowImageSelectedNotification, uploadImage, handleImageUpload, isDemoUserVisible, setDemoUserVisible, }) {
   const { currentUser } = useCurrentUser();

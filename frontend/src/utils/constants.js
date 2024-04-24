@@ -1,6 +1,6 @@
 // constants.js
 const apiConfig = {
-  url: 'http://localhost:2999',
+  url: 'https://api.wild.nomoredomainsmonster.ru',
   headers: {
     'Content-Type': 'application/json'
   }
