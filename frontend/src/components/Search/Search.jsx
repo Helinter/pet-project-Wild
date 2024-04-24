@@ -22,32 +22,6 @@ function Search({
   const [foundUsers, setFoundUsers] = useState([]);
   const [subscriptionUsers, setSubscriptionUsers] = useState([]);
 
-
-  useEffect(() => {
-    if (!isDemoUserVisible) {
-      // Загрузить данные о карточках и подписках заново
-      api.getCards()
-        .then((cardsData) => {
-          setCards(cardsData);
-        })
-        .catch((error) => {
-          console.error('Ошибка при загрузке карточек:', error);
-        });
-
-      const fetchSubscriptionUsers = async () => {
-        const usersData = [];
-        for (const card of cards) {
-          const userData = await api.getUserById(card.owner);
-          usersData.push(userData);
-        }
-        setSubscriptionUsers(usersData);
-      };
-
-      fetchSubscriptionUsers();
-    }
-  }, [isDemoUserVisible]);
-
-
   useEffect(() => {
     api.getCards()
       .then((cardsData) => {
@@ -65,7 +39,7 @@ function Search({
         console.error('Ошибка при загрузке пользователей:', error);
       });
 
-  }, []);
+  }, [isDemoUserVisible]);
 
   useEffect(() => {
     localStorage.setItem('demoUser', JSON.stringify(demoUser));
@@ -74,19 +48,17 @@ function Search({
 
   useEffect(() => {
     const fetchSubscriptionUsers = async () => {
-      const usersData = [];
-      for (const card of cards) {
-        const userData = await api.getUserById(card.owner);
-        // Проверяем, содержится ли id пользователя в подписках текущего пользователя
-        if (currentUser.subscriptions.includes(userData._id)) {
-          usersData.push(userData);
-        }
-      }
+      const usersData = await Promise.all(currentUser.subscriptions.map(async (userId) => {
+        // Получаем данные пользователя по его id
+        const userData = await api.getUserById(userId);
+        return userData;
+      }));
       setSubscriptionUsers(usersData);
     };
 
     fetchSubscriptionUsers();
-  }, [cards, currentUser]);
+  }, [currentUser.subscriptions]);
+
 
   const handleInputChange = (event) => {
     const value = event.target.value;

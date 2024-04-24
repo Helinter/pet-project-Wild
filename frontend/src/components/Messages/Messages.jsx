@@ -9,7 +9,7 @@ import PopupWithForm from '../Popup/PopupWithForm.jsx';
 
 const socket = io('https://api.wild.nomoredomainsmonster.ru');
 
-function Messages({ handleButtonClick, handleCardClick, selectedChatId, setSelectedChatId, selectedImage, setSelectedImage, showImageSelectedNotification, setShowImageSelectedNotification, uploadImage, handleImageUpload, isDemoUserVisible, setDemoUserVisible, }) {
+function Messages({ windowWidth, handleButtonClick, handleCardClick, selectedChatId, setSelectedChatId, selectedImage, setSelectedImage, showImageSelectedNotification, setShowImageSelectedNotification, uploadImage, handleImageUpload, isDemoUserVisible, setDemoUserVisible, }) {
   const { currentUser } = useCurrentUser();
   const [chats, setChats] = useState([]);
   const [messageInput, setMessageInput] = useState('');
@@ -250,11 +250,15 @@ function Messages({ handleButtonClick, handleCardClick, selectedChatId, setSelec
       .catch(error => console.error('Error deleting message:', error));
   };
 
+  const goToChats = () =>{
+    setSelectedChatId(null);
+  }
+
 
   return (
     <>
       {!isDemoUserVisible && (<section className="messages" onClick={handleCloseContextMenu}>
-        <div className="messages-list">
+      <div className={`messages-list ${windowWidth < 668 && !selectedChatId ? "fullscreen" : ""} ${windowWidth < 668 && selectedChatId ? "display-none" : ""}`}>
           <h2 className="messages-list__name-container">
             <p className="messages-list__name">Чаты</p>
             <div className="chats-usersearch-container">
@@ -287,8 +291,10 @@ function Messages({ handleButtonClick, handleCardClick, selectedChatId, setSelec
                 {chat.otherUser && (
                   <>
                     <img className="messages-list__list-item__photo" src={chat.otherUser.avatar} alt="photo" />
+                    <div className='name__container'>
                     <p className="messages-list__list-item__name">{chat.otherUser.name}</p>
                     <p className="messages-list__list-item__name messages-list__list-item__username">{chat.otherUser.username}</p>
+                    </div>
                   </>
                 )}
                 <div className="messages-list__list-item__indicator"></div>
@@ -322,8 +328,13 @@ function Messages({ handleButtonClick, handleCardClick, selectedChatId, setSelec
           </div>
         </div>
         {selectedChatId && (
-          <div className="messages-chat">
+         <div className={`messages-chat ${windowWidth < 668 && selectedChatId ? "fullscreen" : ""} ${windowWidth < 668 && !selectedChatId ? "display-none" : ""}`}>
             <div className="messages-chat-header">
+              {windowWidth < 668 && selectedChatId && (
+                <>
+                <button className='go-to-chats' onClick={goToChats}></button>
+                </>
+              )}
               {selectedChatId && (
                 <>
                   <img

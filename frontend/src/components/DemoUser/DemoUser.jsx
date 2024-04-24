@@ -132,15 +132,7 @@ useEffect(()=>{
         <div className="demoUser__container-info">
           <div className="demoUser__container-name-box">
             <h2 className="demoUser__container-info-name">{user?.name || 'Гость'}</h2>
-          </div>
-          <div className="demoUser__container-subs-box">
-            <p className="demoUser__container-subs-box-item">{cards.length} фото</p>
-            <p className="demoUser__container-subs-box-item">{user.subscribers.length} подписчиков</p>
-            <p className="demoUser__container-subs-box-item">{user.subscriptions.length} подписок</p>
-          </div>
-          <p className='demoUser__container-text'>{user?.bio || 'Информация'}</p>
-        </div>
-        <div className="buttons-container">
+            <div className="buttons-container">
       <button className="back-button" onClick={handleBackClick}>Назад</button>
       <button className="chat-button" onClick={handleChatClick}>Преейти в чат</button>
       <button
@@ -151,6 +143,15 @@ useEffect(()=>{
         {isSubscribed ? 'Отписаться' : 'Подписаться'}
       </button>
       </div>
+          </div>
+          <div className="demoUser__container-subs-box">
+            <p className="demoUser__container-subs-box-item">{cards.length} фото</p>
+            <p className="demoUser__container-subs-box-item">{user.subscribers.length} подписчиков</p>
+            <p className="demoUser__container-subs-box-item">{user.subscriptions.length} подписок</p>
+          </div>
+          <p className='demoUser__container-text'>{user?.bio || 'Информация'}</p>
+        </div>
+        
       </div>
       <div className="demoUser__photos">
         {cards.map(card => (

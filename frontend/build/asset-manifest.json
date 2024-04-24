@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.22d4ea22.css",
-    "main.js": "/static/js/main.8acafeae.js",
+    "main.css": "/static/css/main.01b5d8d0.css",
+    "main.js": "/static/js/main.586f6a12.js",
     "static/js/592.5a66de1e.chunk.js": "/static/js/592.5a66de1e.chunk.js",
     "static/media/comment-3-svgrepo-com.svg": "/static/media/comment-3-svgrepo-com.b1d0f1934377aa314bb0.svg",
     "static/media/Vector3Home.svg": "/static/media/Vector3Home.629d1a7ba43417515fb1540db6f99e9a.svg",
@@ -19,12 +19,12 @@
     "static/media/Close_Icon.svg": "/static/media/Close_Icon.039f1f5203f653b4bacd.svg",
     "static/media/Arrow_Left.svg": "/static/media/Arrow_Left.03ccc31a9490274ddd76.svg",
     "static/media/Vector.svg": "/static/media/Vector.2bb41b935c1cb929143e.svg",
-    "main.22d4ea22.css.map": "/static/css/main.22d4ea22.css.map",
-    "main.8acafeae.js.map": "/static/js/main.8acafeae.js.map",
+    "main.01b5d8d0.css.map": "/static/css/main.01b5d8d0.css.map",
+    "main.586f6a12.js.map": "/static/js/main.586f6a12.js.map",
     "592.5a66de1e.chunk.js.map": "/static/js/592.5a66de1e.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.22d4ea22.css",
-    "static/js/main.8acafeae.js"
+    "static/css/main.01b5d8d0.css",
+    "static/js/main.586f6a12.js"
   ]
 }

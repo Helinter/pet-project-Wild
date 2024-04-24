@@ -7,6 +7,8 @@ function ImagePopup({ selectedCard, link, name, isOpen, onClose, cards, setSelec
   const location = useLocation();
   const [commentInput, setCommentInput] = useState('');
   const [comments, setComments] = useState([]);
+  const [isAddingComment, setIsAddingComment] = useState(false);
+
 
   const handlePreviousCard = () => {
     const currentIndex = cards.findIndex(card => card.link === link);
@@ -69,26 +71,30 @@ const openDemoUser= async (user) =>{
     setCommentInput(event.target.value);
   };
 
-  const handleAddComment = async () => {
-    if (commentInput.trim() === '') return;
-    try {
-      const newComment = await api.addCommentToCard(selectedCard._id, { text: commentInput.trim() });
-      const commentsWithUserInfo = await Promise.all(newComment.map(async (comment) => {
-        const user = await api.getUserById(comment.userId);
-        return {
-          ...comment,
-          user: {
-            username: user.username,
-            avatar: user.avatar,
-          },
-        };
-      }));
-      setComments(commentsWithUserInfo);
-      setCommentInput('');
-    } catch (error) {
-      console.error('Ошибка при добавлении комментария:', error);
-    }
-  };
+const handleAddComment = async () => {
+  if (commentInput.trim() === '' || isAddingComment) return;
+  setIsAddingComment(true);
+  try {
+    const newComment = await api.addCommentToCard(selectedCard._id, { text: commentInput.trim() });
+    const commentsWithUserInfo = await Promise.all(newComment.map(async (comment) => {
+      const user = await api.getUserById(comment.userId);
+      return {
+        ...comment,
+        user: {
+          username: user.username,
+          avatar: user.avatar,
+        },
+      };
+    }));
+    setComments(commentsWithUserInfo);
+    setCommentInput('');
+  } catch (error) {
+    console.error('Ошибка при добавлении комментария:', error);
+  } finally {
+    setIsAddingComment(false);
+  }
+};
+
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
@@ -127,7 +133,8 @@ const openDemoUser= async (user) =>{
                 onChange={handleCommentInputChange}
                 onKeyPress={handleKeyPress}
               />
-              <button className="add-comment-button" onClick={handleAddComment}>Добавить</button>
+              <button className="add-comment-button" onClick={handleAddComment} disabled={isAddingComment}>Добавить</button>
+
             </div>
             <ul className="comment-list">
               {comments.slice().reverse().map((comment, index) => (

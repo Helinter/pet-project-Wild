@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-left: 20px;
     max-width: 180px;
     border-right: 1px solid #434343;
 }

@@ -6,7 +6,7 @@ import Message_Notification from '../../images/icons/Message_Notification.svg';
 import Profile from '../../images/icons/user-profile-circle.svg';
 import Logo from '../../images/logoza.png';
 
-const Bar = ({isDemoUserVisible, setDemoUserVisible}) => {
+const Bar = ({isDemoUserVisible, setDemoUserVisible, handleBarClose}) => {
   const location = useLocation();
   const [selectedLink, setSelectedLink] = useState(location.pathname);
 
@@ -17,7 +17,8 @@ const Bar = ({isDemoUserVisible, setDemoUserVisible}) => {
   }, [location]);
 
   const handleLinkClick = () =>{
-    setDemoUserVisible(false)
+    setDemoUserVisible(false);
+    handleBarClose();
   }
 
   return (

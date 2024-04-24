@@ -37,7 +37,7 @@ function App() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showImageSelectedNotification, setShowImageSelectedNotification] = useState(false);
   const [isPopupButtonDisabled, setIsPopupButtonDisabled] = useState(true);
-  const [isBarVisible, setIsBarVisible] = useState(true);
+  const [isBarVisible, setIsBarVisible] = useState(false);
   const [demoUser, setDemoUser] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -242,6 +242,7 @@ function App() {
       {(isLogedin && (isBarVisible || windowWidth > 900)) ? <Bar
         isDemoUserVisible={isDemoUserVisible}
         setDemoUserVisible={setDemoUserVisible}
+        handleBarClose={handleBarClose}
       /> : null}
       {(!isBarVisible && windowWidth < 900) &&<button className="burger-button" onClick={handleBurgerClick}></button>}
       {(isBarVisible && windowWidth < 900) && <button className="bar-close-button" onClick={handleBarClose}></button>}
@@ -299,6 +300,7 @@ function App() {
             isDemoUserVisible={isDemoUserVisible}
             setDemoUserVisible={setDemoUserVisible}
             handleButtonClick={handleButtonClick}
+            windowWidth={windowWidth}
           />} />
           <Route path="/profile" element={<Profile
             handleCardClick={handleCardClick}
